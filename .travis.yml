@@ -18,6 +18,7 @@ scripts:
 
 after_success:
   - COVERALLS_REPO_TOKEN=$coverall_token yarn test:coverage:coveralls && rm -rf ./coverage
+  - yarn build
   - yarn travis-deploy-once --pro "yarn semantic-release"
 
 branches:
