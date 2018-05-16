@@ -16,6 +16,9 @@ import {
 const adapter = new Adapter()
 configure({ adapter })
 
+const getComponent = (props, renderFn = shallow, Component = Kalendaryo) =>
+  renderFn(<Component render={() => null} {...props} />)
+
 global.shallow = shallow
 global.mount = mount
 global.render = render
@@ -29,5 +32,6 @@ global.getDate = getDate
 global.getDaysInMonth = getDaysInMonth
 global.getMonth = getMonth
 global.setDate = setDate
-global.getComponentInstance = (props, Component = Kalendaryo) =>
-  shallow(<Component render={() => null} {...props} />).instance()
+global.getComponent = getComponent
+global.getComponentInstance = (props, renderFn = shallow, Component = Kalendaryo) =>
+  getComponent(props, renderFn, Component).instance()

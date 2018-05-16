@@ -9,14 +9,7 @@ export class DateError extends Error {
   }
 }
 
-export class DateFormatError extends Error {
-  constructor (message) {
-    super(message || 'Invalid Date Format')
-    this.name = 'Invalid Date Format Error'
-  }
-}
-
-export class DateMonthFormatError extends DateFormatError {
+export class DateMonthFormatError extends DateError {
   constructor (message) {
     super(
       message ||
