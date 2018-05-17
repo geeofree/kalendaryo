@@ -1,7 +1,7 @@
 let kalendaryo, props
 
 beforeEach(() => {
-  kalendaryo = getComponentInstance()
+  kalendaryo = getComponent().instance()
   props = kalendaryo.props
   console.warn = jest.fn(warn => {
     throw new Error(warn)
@@ -42,6 +42,27 @@ describe('<Kalendaryo />', () => {
       test('prints a console error for non-function type values', () => {
         getComponentInstance({ onSelectedChange: false })
         expect(console.warn).toThrow()
+      })
+
+      test('it is invoked when `selectedDate` state changes', () => {
+        const { defaultFormat } = props
+        const onSelectedChange = jest.fn()
+        const component = getComponent({ onSelectedChange }, mount)
+
+        component.setState({ selectedDate: birthday })
+        expect(onSelectedChange).toHaveBeenCalled()
+
+        const selectedDateValue = format(onSelectedChange.mock.calls[0], defaultFormat)
+        const birthdayValue = format(birthday, defaultFormat)
+        expect(selectedDateValue).toBe(birthdayValue)
+      })
+
+      test('it is not invoked when `selectedDate` state does not change', () => {
+        const onSelectedChange = jest.fn()
+        const component = getComponentInstance({ onSelectedChange }, mount)
+
+        component.setState(prevState => prevState)
+        expect(onSelectedChange).not.toHaveBeenCalled()
       })
     })
   })
@@ -182,6 +203,64 @@ describe('<Kalendaryo />', () => {
             format(setDate(day.date, day.label), 'MM/DD/YY')
           )
         })
+      })
+    })
+
+    describe('#setDate', () => {
+      test('it throws an error on invalid date values given the argument: (notADateObject)', () => {
+        expect(() => kalendaryo.setDate(false)).toThrow()
+      })
+
+      test('it updates the `date` state to May 23, 1996 given the argument: (new Date(1996, 4, 23))', () => {
+        let { date } = kalendaryo.state
+        const { defaultFormat } = props
+        const dateNow = format(date, defaultFormat)
+
+        kalendaryo.setDate(birthday)
+        date = kalendaryo.state.date
+        const dateAfter = format(date, defaultFormat)
+
+        expect(dateAfter).not.toBe(dateNow)
+      })
+    })
+
+    describe('#setSelectedDate', () => {
+      test('it throws an error on invalid date values given the argument: (notADateObject)', () => {
+        expect(() => kalendaryo.setSelectedDate(false)).toThrow()
+      })
+
+      test('it updates the `selectedDate` state to May 23, 1996 given the argument: (new Date(1996, 4, 23))', () => {
+        let { selectedDate } = kalendaryo.state
+        const { defaultFormat } = props
+        const selectedDateNow = format(selectedDate, defaultFormat)
+
+        kalendaryo.setSelectedDate(birthday)
+        selectedDate = kalendaryo.state.selectedDate
+        const selectedDateAfter = format(selectedDate, defaultFormat)
+
+        expect(selectedDateAfter).not.toBe(selectedDateNow)
+      })
+    })
+
+    describe('#selectDate', () => {
+      test('it throws an error on invalid date values given the argument: (notADateObject)', () => {
+        expect(() => kalendaryo.selectDate(false)).toThrow()
+      })
+
+      test('it updates both the `date` & `selectedDate` state to May 23, 1996 given the argument: (new Date(1996, 4, 23))', () => {
+        let { date, selectedDate } = kalendaryo.state
+        const { defaultFormat } = props
+        const dateNow = format(date, defaultFormat)
+        const selectedDateNow = format(selectedDate, defaultFormat)
+
+        kalendaryo.selectDate(birthday)
+        date = kalendaryo.state.date
+        selectedDate = kalendaryo.state.selectedDate
+        const dateAfter = format(date, defaultFormat)
+        const selectedDateAfter = format(selectedDate, defaultFormat)
+
+        expect(dateAfter).not.toBe(dateNow)
+        expect(selectedDateAfter).not.toBe(selectedDateNow)
       })
     })
   })
