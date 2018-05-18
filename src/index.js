@@ -5,11 +5,13 @@ import {
   addMonths,
   subMonths,
   isDate,
-  getDaysInMonth,
-  setDate,
   getDate,
   isEqual as isEqualDates,
-  isWithinRange
+  isWithinRange,
+  startOfMonth,
+  endOfMonth,
+  eachDay,
+  getDay
 } from 'date-fns'
 
 import { isValidMonthFormat, DateMonthFormatError, DateError } from './utils'
@@ -68,14 +70,15 @@ class Kalendaryo extends Component {
   }
 
   getDaysInMonth = (date = this.state.date) => {
-    const daysArray = Array(getDaysInMonth(date))
+    if (!isDate(date)) throw new DateError()
 
-    const dayObject = (_, i) => {
-      const day = i + 1
-      return { label: day, date: setDate(date, day) }
-    }
+    const dayObjects = dateValue => ({
+      dateValue,
+      label: getDate(dateValue),
+      dayOfWeek: getDay(dateValue)
+    })
 
-    return Array.from(daysArray, dayObject)
+    return eachDay(startOfMonth(date), endOfMonth(date)).map(dayObjects)
   }
 
   setDate = date => {

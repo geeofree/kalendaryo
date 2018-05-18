@@ -186,6 +186,10 @@ describe('<Kalendaryo />', () => {
     })
 
     describe('#getDaysInMonth', () => {
+      test('throws an error on invalid date objects given the argument: (notADateObject)', () => {
+        expect(() => kalendaryo.getDaysInMonth(false)).toThrow()
+      })
+
       test('returns an Array', () => {
         expect(kalendaryo.getDaysInMonth()).toBeInstanceOf(Array)
       })
@@ -195,12 +199,13 @@ describe('<Kalendaryo />', () => {
         expect(kalendaryo.getDaysInMonth()).toHaveLength(totalDaysThisMonth)
       })
 
-      test('has array items of objects with key/value pairs of {label: dayNumber, date: dateObjValueOfDay}', () => {
+      test('has array items of objects with key/value pairs of { label: dayNumber, dateValue: dateObjValueOfDay, dayOfWeek: dayOfWeekNumber }', () => {
         kalendaryo.getDaysInMonth().forEach(day => {
-          expect(day.label).toEqual(getDate(day.date))
-          expect(day.date).toBeInstanceOf(Date)
-          expect(format(day.date, 'MM/DD/YY')).toEqual(
-            format(setDate(day.date, day.label), 'MM/DD/YY')
+          expect(day.label).toEqual(getDate(day.dateValue))
+          expect(day.dateValue).toBeInstanceOf(Date)
+          expect(day.dayOfWeek).toEqual(getDay(day.dateValue))
+          expect(format(day.dateValue, 'MM/DD/YY')).toEqual(
+            format(setDate(day.dateValue, day.label), 'MM/DD/YY')
           )
         })
       })
