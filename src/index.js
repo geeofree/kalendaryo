@@ -7,11 +7,11 @@ import {
   isDate,
   getDate,
   isEqual as isEqualDates,
-  isWithinRange,
   startOfMonth,
   endOfMonth,
   eachDay,
-  getDay
+  getDay,
+  differenceInDays
 } from 'date-fns'
 
 import { isValidMonthFormat, DateMonthFormatError, DateError } from './utils'
@@ -96,6 +96,13 @@ class Kalendaryo extends Component {
     this.setState({ date, selectedDate: date })
   }
 
+  isWithinRange = (date1, date2) => {
+    if (!isDate(date1) || !isDate(date2)) {
+      throw new DateError()
+    }
+    return differenceInDays(date1, date2) >= 0
+  }
+
   componentDidUpdate (_, prevState) {
     const { selectedDate } = this.state
     const { onSelectedChange } = this.props
@@ -112,12 +119,7 @@ class Kalendaryo extends Component {
 
   render () {
     const { state, props, ...methods } = this
-
-    return this.props.render({
-      ...state,
-      ...methods,
-      isWithinRange
-    })
+    return this.props.render({ ...state, ...methods })
   }
 }
 

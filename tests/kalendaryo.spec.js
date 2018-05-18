@@ -268,5 +268,24 @@ describe('<Kalendaryo />', () => {
         expect(selectedDateAfter).not.toBe(selectedDateNow)
       })
     })
+
+    describe('#isWithinRange', () => {
+      test('throws an error on invalid date values given for `date1` argument', () => {
+        expect(() => kalendaryo.isWithinRange(false, dateToday)).toThrow()
+      })
+
+      test('throws an error on invalid date values given for `date2` argument', () => {
+        expect(() => kalendaryo.isWithinRange(dateToday, false)).toThrow()
+      })
+
+      test('returns true if the diff. between `date1` & `date2` is >= 0', () => {
+        expect(kalendaryo.isWithinRange(dateToday, birthday)).toBe(true)
+        expect(kalendaryo.isWithinRange(dateToday, dateToday)).toBe(true)
+      })
+
+      test('returns false if the diff. between `date1` & `date2` is < 0', () => {
+        expect(kalendaryo.isWithinRange(birthday, dateToday)).toBe(false)
+      })
+    })
   })
 })
