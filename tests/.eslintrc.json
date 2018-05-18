@@ -16,6 +16,7 @@
     "getMonth": true,
     "setDate": true,
     "getComponentInstance": true,
-    "getComponent": true
+    "getComponent": true,
+    "getDay": true
   }
 }

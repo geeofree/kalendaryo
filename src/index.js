@@ -5,11 +5,13 @@ import {
   addMonths,
   subMonths,
   isDate,
-  getDaysInMonth,
-  setDate,
   getDate,
   isEqual as isEqualDates,
-  isWithinRange
+  startOfMonth,
+  endOfMonth,
+  eachDay,
+  getDay,
+  differenceInDays
 } from 'date-fns'
 
 import { isValidMonthFormat, DateMonthFormatError, DateError } from './utils'
@@ -68,14 +70,15 @@ class Kalendaryo extends Component {
   }
 
   getDaysInMonth = (date = this.state.date) => {
-    const daysArray = Array(getDaysInMonth(date))
+    if (!isDate(date)) throw new DateError()
 
-    const dayObject = (_, i) => {
-      const day = i + 1
-      return { label: day, date: setDate(date, day) }
-    }
+    const dayObjects = dateValue => ({
+      dateValue,
+      label: getDate(dateValue),
+      dayOfWeek: getDay(dateValue)
+    })
 
-    return Array.from(daysArray, dayObject)
+    return eachDay(startOfMonth(date), endOfMonth(date)).map(dayObjects)
   }
 
   setDate = date => {
@@ -91,6 +94,13 @@ class Kalendaryo extends Component {
   selectDate = date => {
     if (!isDate(date)) throw new DateError()
     this.setState({ date, selectedDate: date })
+  }
+
+  isWithinRange = (date1, date2) => {
+    if (!isDate(date1) || !isDate(date2)) {
+      throw new DateError()
+    }
+    return differenceInDays(date1, date2) >= 0
   }
 
   componentDidUpdate (_, prevState) {
@@ -109,12 +119,7 @@ class Kalendaryo extends Component {
 
   render () {
     const { state, props, ...methods } = this
-
-    return this.props.render({
-      ...state,
-      ...methods,
-      isWithinRange
-    })
+    return this.props.render({ ...state, ...methods })
   }
 }
 
