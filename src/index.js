@@ -18,7 +18,7 @@ import {
   isSameMonth
 } from 'date-fns'
 
-import { isValidMonthFormat, DateMonthFormatError, DateError } from './utils'
+import { DateError } from './utils'
 
 const dateToDayObjects = dateValue => ({
   dateValue,
@@ -45,33 +45,52 @@ class Kalendaryo extends Component {
       !isDate(props.startingDate) ? new DateError() : null
   }
 
-  getDate = (dateFormat = this.props.defaultFormat, date = this.state.date) => {
-    if (!isDate(date)) {
-      throw new DateError()
+  getFormattedDate = (arg = this.state.date, dateFormat) => {
+    if (isDate(arg) && dateFormat === undefined) {
+      return format(arg, this.props.defaultFormat)
     }
 
-    return format(date, dateFormat)
-  }
-
-  getSelectedDate = (dateFormat = this.props.defaultFormat) =>
-    format(this.state.selectedDate, dateFormat)
-
-  getMonth = (dateFormat = 'MMM', date = this.state.date) => {
-    if (!isValidMonthFormat(dateFormat)) {
-      throw new DateMonthFormatError()
+    if (typeof arg === 'string' && dateFormat === undefined) {
+      return format(this.state.date, arg)
     }
 
-    return this.getDate(dateFormat, date)
+    if (isDate(arg) && typeof dateFormat === 'string') {
+      return format(arg, dateFormat)
+    }
+
+    throw new Error('Invalid arguments passed')
   }
 
-  getDateNextMonth = (date = this.state.date) => {
-    if (!isDate(date)) throw new DateError()
-    return addMonths(date, 1)
+  getDateNextMonth = (arg = this.state.date, amount) => {
+    if (isDate(arg) && amount === undefined) {
+      return addMonths(arg, 1)
+    }
+
+    if (Number.isInteger(arg) && amount === undefined) {
+      return addMonths(this.state.date, arg)
+    }
+
+    if (isDate(arg) && Number.isInteger(amount)) {
+      return addMonths(arg, amount)
+    }
+
+    throw new Error('Invalid arguments passed')
   }
 
-  getDatePrevMonth = (date = this.state.date) => {
-    if (!isDate(date)) throw new DateError()
-    return subMonths(date, 1)
+  getDatePrevMonth = (arg = this.state.date, amount) => {
+    if (isDate(arg) && amount === undefined) {
+      return subMonths(arg, 1)
+    }
+
+    if (Number.isInteger(arg) && amount === undefined) {
+      return subMonths(this.state.date, arg)
+    }
+
+    if (isDate(arg) && Number.isInteger(amount)) {
+      return subMonths(arg, amount)
+    }
+
+    throw new Error('Invalid arguments passed')
   }
 
   getDay = (date = this.state.date) => {
