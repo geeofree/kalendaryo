@@ -211,6 +211,34 @@ describe('<Kalendaryo />', () => {
       })
     })
 
+    describe('#getWeeksInMonth', () => {
+      test('throws an error when given an invalid date value', () => {
+        expect(() => kalendaryo.getWeeksInMonth(false)).toThrow()
+      })
+
+      test('returns an Array', () => {
+        expect(kalendaryo.getWeeksInMonth()).toBeInstanceOf(Array)
+      })
+
+      test('returns the correct number of days in the month of the current date', () => {
+        const totalDaysThisMonth = getDaysInMonth(dateToday)
+        const totalDaysToTest = kalendaryo.getWeeksInMonth()
+          .map((item) => item.length)
+          .reduce((a, b) => a + b)
+
+        expect(totalDaysToTest).toEqual(totalDaysThisMonth)
+      })
+
+      test('returns the correct number of days in the month of the date: \'May 23, 1996\'', () => {
+        const totalDaysInBirthdate = getDaysInMonth(birthday)
+        const totalDaysToTest = kalendaryo.getWeeksInMonth()
+          .map((item) => item.length)
+          .reduce((a, b) => a + b)
+
+        expect(totalDaysToTest).toEqual(totalDaysInBirthdate)
+      })
+    })
+
     describe('#setDate', () => {
       test('it throws an error on invalid date values given the argument: (notADateObject)', () => {
         expect(() => kalendaryo.setDate(false)).toThrow()
