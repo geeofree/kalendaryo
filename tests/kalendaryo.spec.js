@@ -68,106 +68,76 @@ describe('<Kalendaryo />', () => {
   })
 
   describe('Methods', () => {
-    describe('#getDate', () => {
-      test("is equal to today's date with the default format when no arguments are given", () => {
-        expect(kalendaryo.getDate()).toEqual(
-          format(dateToday, props.defaultFormat)
-        )
+    describe('#getFormattedDate', () => {
+      test('returns the current date state with the default format when given no arguments', () => {
+        expect(kalendaryo.getFormattedDate()).toEqual(format(dateToday, props.defaultFormat))
       })
 
-      test("is equal to today's date formatted as 'MM/DD/YY' given the argument: ('MM/DD/YY')", () => {
-        expect(kalendaryo.getDate('MM/DD/YY')).toEqual(
-          format(dateToday, 'MM/DD/YY')
-        )
+      test('returns the current date state with the format of \'MM/DD/YY\' given the argument: (\'MM/DD/YY\')', () => {
+        expect(kalendaryo.getFormattedDate('MM/DD/YY')).toEqual(format(dateToday, 'MM/DD/YY'))
       })
 
-      test('is equal to May 23, 1996 given the arguments: (defaultFormat, new Date(1996, 4, 23))', () => {
-        expect(kalendaryo.getDate(props.defaultFormat, birthday)).toEqual(
-          format(birthday, props.defaultFormat)
-        )
+      test('returns \'05/23/96\' given the arguments: (new Date(1996, 4, 23), \'MM/DD/YY\')', () => {
+        expect(kalendaryo.getFormattedDate(birthday, 'MM/DD/YY')).toEqual(format(birthday, 'MM/DD/YY'))
       })
 
-      test('throws an error given the argument: (defaultFormat, notADateObject)', () => {
-        expect(() => kalendaryo.getDate(props.defaultFormat, false)).toThrow()
-      })
-    })
-
-    describe('#getSelectedDate', () => {
-      test("is equal to today's date with the default date format when no arguments are given", () => {
-        expect(kalendaryo.getSelectedDate()).toEqual(
-          format(dateToday, props.defaultFormat)
-        )
-      })
-
-      test("is equal to today's date formatted as 'MM/DD/YY' given the argument: ('MM/DD/YY')", () => {
-        expect(kalendaryo.getSelectedDate('MM/DD/YY')).toEqual(
-          format(dateToday, 'MM/DD/YY')
-        )
-      })
-    })
-
-    describe('#getMonth', () => {
-      test("is equal to today's month with the default format of 'MMM' when no arguments are given", () => {
-        expect(kalendaryo.getMonth()).toEqual(format(dateToday, 'MMM'))
-      })
-
-      test("is to equal 'Dec' given the arguments: ('MMM', new Date(1996, 11, 23))", () => {
-        const december = new Date(1996, 11, 23)
-        expect(kalendaryo.getMonth('MMM', december)).toEqual('Dec')
-      })
-
-      test('throws an error given the argument: (invalidMonthFormat)', () => {
-        expect(() => kalendaryo.getMonth('')).toThrow()
+      test('throws when given invalid arguments', () => {
+        expect(() => kalendaryo.getFormattedDate(false)).toThrow()
+        expect(() => kalendaryo.getFormattedDate('MM/DD/YY', '')).toThrow()
+        expect(() => kalendaryo.getFormattedDate(dateToday, false)).toThrow()
+        expect(() => kalendaryo.getFormattedDate(dateToday, null)).toThrow()
       })
     })
 
     describe('#getDateNextMonth', () => {
-      test("is equal to the next month of today's date when no arguments are given", () => {
-        const dateNextMonthToTest = format(
-          kalendaryo.getDateNextMonth(),
-          props.defaultFormat
-        )
-        const dateNextMonth = format(
-          addMonths(dateToday, 1),
-          props.defaultFormat
-        )
-        expect(dateNextMonthToTest).toEqual(dateNextMonth)
+      test('is equal to the next month of the current date when no arguments are given', () => {
+        const nextMonthToTest = kalendaryo.getDateNextMonth()
+        const nextMonth = getMonth(addMonths(dateToday, 1))
+        expect(getMonth(nextMonthToTest)).toEqual(nextMonth)
       })
 
-      test('throws an error given the argument: (notADateObject)', () => {
+      test('is equal to the next 2 months of the current date when given the argument: (2)', () => {
+        const nextMonthToTest = kalendaryo.getDateNextMonth(2)
+        const nextMonth = getMonth(addMonths(dateToday, 2))
+        expect(getMonth(nextMonthToTest)).toEqual(nextMonth)
+      })
+
+      test('is equal to the next 3 months of the date: May 23, 1996 given the arguments: (new Date(1996, 4, 23), 3)', () => {
+        const nextMonthToTest = kalendaryo.getDateNextMonth(birthday, 3)
+        const nextMonth = getMonth(addMonths(birthday, 3))
+        expect(getMonth(nextMonthToTest)).toEqual(nextMonth)
+      })
+
+      test('throws an error when given invalid arguments', () => {
         expect(() => kalendaryo.getDateNextMonth(false)).toThrow()
-      })
-
-      test("is equal to the next month of 'May 23, 1996' given the argument: (new Date(1996, 4, 23))", () => {
-        const nextMonthToTest = kalendaryo.getDateNextMonth(
-          new Date(1996, 4, 23)
-        )
-        expect(getMonth(nextMonthToTest)).toEqual(5)
+        expect(() => kalendaryo.getDateNextMonth(1, 1)).toThrow()
+        expect(() => kalendaryo.getDateNextMonth(dateToday, false)).toThrow()
       })
     })
 
     describe('#getDatePrevMonth', () => {
-      test("is equal to the previous month of today's date when no arguments are given", () => {
-        const datePrevMonthToTest = format(
-          kalendaryo.getDatePrevMonth(),
-          props.defaultFormat
-        )
-        const datePrevMonth = format(
-          subMonths(dateToday, 1),
-          props.defaultFormat
-        )
-        expect(datePrevMonthToTest).toEqual(datePrevMonth)
+      test('is equal to the previous month of the current date when no arguments are given', () => {
+        const prevMonthToTest = kalendaryo.getDatePrevMonth()
+        const prevMonth = getMonth(subMonths(dateToday, 1))
+        expect(getMonth(prevMonthToTest)).toEqual(prevMonth)
       })
 
-      test('throws an error given the argument: (notADateObject)', () => {
+      test('is equal to the previous 2 months of the current date when given the argument: (2)', () => {
+        const prevMonthToTest = kalendaryo.getDatePrevMonth(2)
+        const prevMonth = getMonth(subMonths(dateToday, 2))
+        expect(getMonth(prevMonthToTest)).toEqual(prevMonth)
+      })
+
+      test('is equal to the previous 3 months of the date: May 23, 1996 given the arguments: (new Date(1996, 4, 23), 3)', () => {
+        const prevMonthToTest = kalendaryo.getDatePrevMonth(birthday, 3)
+        const prevMonth = getMonth(subMonths(birthday, 3))
+        expect(getMonth(prevMonthToTest)).toEqual(prevMonth)
+      })
+
+      test('throws an error when given invalid arguments', () => {
         expect(() => kalendaryo.getDatePrevMonth(false)).toThrow()
-      })
-
-      test("is equal to the previous month of 'May 23, 1996' given the argument: (new Date(1996, 4, 23))", () => {
-        const prevMonthToTest = kalendaryo.getDatePrevMonth(
-          new Date(1996, 4, 23)
-        )
-        expect(getMonth(prevMonthToTest)).toEqual(3)
+        expect(() => kalendaryo.getDatePrevMonth(1, 1)).toThrow()
+        expect(() => kalendaryo.getDatePrevMonth(dateToday, false)).toThrow()
       })
     })
 
