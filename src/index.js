@@ -11,10 +11,20 @@ import {
   endOfMonth,
   eachDay,
   getDay,
-  differenceInDays
+  differenceInDays,
+  addWeeks,
+  startOfWeek,
+  endOfWeek,
+  isSameMonth
 } from 'date-fns'
 
 import { isValidMonthFormat, DateMonthFormatError, DateError } from './utils'
+
+const dateToDayObjects = dateValue => ({
+  dateValue,
+  label: getDate(dateValue),
+  dayOfWeek: getDay(dateValue)
+})
 
 class Kalendaryo extends Component {
   state = {
@@ -71,14 +81,39 @@ class Kalendaryo extends Component {
 
   getDaysInMonth = (date = this.state.date) => {
     if (!isDate(date)) throw new DateError()
+    return eachDay(startOfMonth(date), endOfMonth(date)).map(dateToDayObjects)
+  }
 
-    const dayObjects = dateValue => ({
-      dateValue,
-      label: getDate(dateValue),
-      dayOfWeek: getDay(dateValue)
-    })
+  getWeeksInMonth = (date = this.state.date) => {
+    if (!isDate(date)) throw new DateError()
 
-    return eachDay(startOfMonth(date), endOfMonth(date)).map(dayObjects)
+    const firstDayOfMonth = startOfMonth(date)
+    const lastDayOfMonth = endOfMonth(date)
+    const lastDayOfFirstWeek = endOfWeek(firstDayOfMonth)
+
+    const getWeeks = (startDay, endDay, weekArray = []) => {
+      const week = eachDay(startDay, endDay).map(dateToDayObjects)
+      const weeks = [...weekArray, week]
+      const nextWeek = addWeeks(startDay, 1)
+
+      const firstDayNextWeek = startOfWeek(nextWeek)
+      const lastDayNextWeek = endOfWeek(nextWeek)
+
+      const firstDayNextWeekIsInMonth = isSameMonth(firstDayNextWeek, date)
+      const lastDayNextWeekIsInMonth = isSameMonth(lastDayNextWeek, date)
+
+      if (firstDayNextWeekIsInMonth) {
+        return getWeeks(
+          firstDayNextWeek,
+          lastDayNextWeekIsInMonth ? lastDayNextWeek : lastDayOfMonth,
+          weeks
+        )
+      }
+
+      return weeks
+    }
+
+    return getWeeks(firstDayOfMonth, lastDayOfFirstWeek)
   }
 
   setDate = date => {
