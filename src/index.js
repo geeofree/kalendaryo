@@ -11,10 +11,12 @@ import {
   endOfMonth,
   eachDay,
   getDay,
+  isWithinRange,
   differenceInDays,
   addWeeks,
   startOfWeek,
   endOfWeek,
+  isSameYear,
   isSameMonth
 } from 'date-fns'
 
@@ -34,12 +36,12 @@ class Kalendaryo extends Component {
 
   static defaultProps = {
     startingDate: new Date(),
-    defaultFormat: 'MMM Do, YYYY'
+    defaultFormat: 'MM/DD/YY'
   }
 
   static propTypes = {
     render: pt.func.isRequired,
-    onSelectedChange: pt.func,
+    onChange: pt.func,
     defaultFormat: pt.string,
     startingDate: props =>
       !isDate(props.startingDate) ? new DateError() : null
@@ -150,24 +152,40 @@ class Kalendaryo extends Component {
     this.setState({ date, selectedDate: date })
   }
 
-  isWithinRange = (date1, date2) => {
-    if (!isDate(date1) || !isDate(date2)) {
+  dateIsInRange = (date, startDate, endDate) => {
+    if (!isDate(date) || !isDate(startDate) || !isDate(endDate)) {
       throw new DateError()
     }
-    return differenceInDays(date1, date2) >= 0
+    return differenceInDays(startDate, endDate) < 1
+      ? isWithinRange(date, startDate, endDate)
+      : false
+  }
+
+  isHighlightedDay = (day) => {
+    if (Number.isInteger(day) === false) {
+      throw new Error('Not a valid number')
+    }
+    return getDate(this.state.selectedDate) === day
+  }
+
+  isSelectedDay = (day) => {
+    const { date, selectedDate } = this.state
+    return (
+      isSameMonth(date, selectedDate) &&
+      isSameYear(date, selectedDate) &&
+      this.isHighlightedDay(day)
+    )
   }
 
   componentDidUpdate (_, prevState) {
-    const { selectedDate } = this.state
-    const { onSelectedChange } = this.props
+    const { onChange } = this.props
 
-    const selectedDateChanged = !isEqualDates(
-      prevState.selectedDate,
-      selectedDate
-    )
+    const dateChanged = !isEqualDates(prevState.date, this.state.date)
+    const selectedDateChanged = !isEqualDates(prevState.selectedDate, this.state.selectedDate)
+    const stateUpdated = dateChanged || selectedDateChanged
 
-    if (selectedDateChanged && onSelectedChange) {
-      onSelectedChange(selectedDate)
+    if (stateUpdated && onChange) {
+      onChange(this.state)
     }
   }
 

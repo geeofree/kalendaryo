@@ -11,6 +11,8 @@ import {
   getDaysInMonth,
   getMonth,
   setDate,
+  addDays,
+  subDays,
   getDay
 } from 'date-fns'
 
@@ -33,6 +35,8 @@ global.getDate = getDate
 global.getDaysInMonth = getDaysInMonth
 global.getMonth = getMonth
 global.setDate = setDate
+global.addDays = addDays
+global.subDays = subDays
 global.getDay = getDay
 global.getComponent = getComponent
 global.getComponentInstance = (props, renderFn = shallow, Component = Kalendaryo) =>

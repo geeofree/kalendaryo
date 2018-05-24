@@ -28,8 +28,8 @@ describe('<Kalendaryo />', () => {
     })
 
     describe('#defaultFormat', () => {
-      test('is set to `MMM Do, YYYY` by default', () => {
-        expect(props.defaultFormat).toEqual('MMM Do, YYYY')
+      test('is set to `MM/DD/YY` by default', () => {
+        expect(props.defaultFormat).toEqual('MM/DD/YY')
       })
 
       test('prints a console error for non-string type values', () => {
@@ -38,31 +38,44 @@ describe('<Kalendaryo />', () => {
       })
     })
 
-    describe('#onSelectedChange', () => {
+    describe('#onChange', () => {
       test('prints a console error for non-function type values', () => {
-        getComponentInstance({ onSelectedChange: false })
+        getComponentInstance({ onChange: false })
         expect(console.warn).toThrow()
+      })
+
+      test('it is invoked when `date` state changes', () => {
+        const { defaultFormat } = props
+        const onChange = jest.fn()
+        const component = getComponent({ onChange }, mount)
+
+        component.setState({ date: birthday })
+        expect(onChange).toHaveBeenCalled()
+
+        const dateValue = format(onChange.mock.calls[0][0].date, defaultFormat)
+        const birthdayValue = format(birthday, defaultFormat)
+        expect(dateValue).toBe(birthdayValue)
       })
 
       test('it is invoked when `selectedDate` state changes', () => {
         const { defaultFormat } = props
-        const onSelectedChange = jest.fn()
-        const component = getComponent({ onSelectedChange }, mount)
+        const onChange = jest.fn()
+        const component = getComponent({ onChange }, mount)
 
         component.setState({ selectedDate: birthday })
-        expect(onSelectedChange).toHaveBeenCalled()
+        expect(onChange).toHaveBeenCalled()
 
-        const selectedDateValue = format(onSelectedChange.mock.calls[0], defaultFormat)
+        const selectedDateValue = format(onChange.mock.calls[0][0].selectedDate, defaultFormat)
         const birthdayValue = format(birthday, defaultFormat)
         expect(selectedDateValue).toBe(birthdayValue)
       })
 
-      test('it is not invoked when `selectedDate` state does not change', () => {
-        const onSelectedChange = jest.fn()
-        const component = getComponentInstance({ onSelectedChange }, mount)
+      test('it is not invoked when the state does not change', () => {
+        const onChange = jest.fn()
+        const component = getComponentInstance({ onChange }, mount)
 
         component.setState(prevState => prevState)
-        expect(onSelectedChange).not.toHaveBeenCalled()
+        expect(onChange).not.toHaveBeenCalled()
       })
     })
   })
@@ -267,22 +280,104 @@ describe('<Kalendaryo />', () => {
       })
     })
 
-    describe('#isWithinRange', () => {
-      test('throws an error on invalid date values given for `date1` argument', () => {
-        expect(() => kalendaryo.isWithinRange(false, dateToday)).toThrow()
+    describe('#dateIsInRange', () => {
+      test('throws an error on invalid date values given for `date` argument', () => {
+        expect(() => kalendaryo.dateIsInRange(false, dateToday, dateToday)).toThrow()
       })
 
-      test('throws an error on invalid date values given for `date2` argument', () => {
-        expect(() => kalendaryo.isWithinRange(dateToday, false)).toThrow()
+      test('throws an error on invalid date values given for `startDate` argument', () => {
+        expect(() => kalendaryo.dateIsInRange(dateToday, false, dateToday)).toThrow()
       })
 
-      test('returns true if the diff. between `date1` & `date2` is >= 0', () => {
-        expect(kalendaryo.isWithinRange(dateToday, birthday)).toBe(true)
-        expect(kalendaryo.isWithinRange(dateToday, dateToday)).toBe(true)
+      test('throws an error on invalid date values given for `endDate` argument', () => {
+        expect(() => kalendaryo.dateIsInRange(dateToday, dateToday, false)).toThrow()
       })
 
-      test('returns false if the diff. between `date1` & `date2` is < 0', () => {
-        expect(kalendaryo.isWithinRange(birthday, dateToday)).toBe(false)
+      test('returns true if the `date` is within the range', () => {
+        const nextMonth = addMonths(dateToday, 1)
+        const lastMonth = subMonths(dateToday, 1)
+        expect(kalendaryo.dateIsInRange(dateToday, lastMonth, nextMonth)).toBe(true)
+        expect(kalendaryo.dateIsInRange(dateToday, dateToday, dateToday)).toBe(true)
+      })
+
+      test('returns false if the `date` is outside the range', () => {
+        const nextMonth = addMonths(dateToday, 1)
+        const lastMonth = subMonths(dateToday, 1)
+
+        expect(kalendaryo.dateIsInRange(birthday, dateToday, nextMonth)).toBe(false)
+        // Return false if startDate > endDate
+        expect(kalendaryo.dateIsInRange(dateToday, nextMonth, lastMonth)).toBe(false)
+      })
+    })
+
+    describe('#isHighlightedDay', () => {
+      test('throws an exception when the `day` argument is not an integer', () => {
+        expect(() => kalendaryo.isHighlightedDay(false)).toThrow()
+        expect(() => kalendaryo.isHighlightedDay('')).toThrow()
+        expect(() => kalendaryo.isHighlightedDay(0.5)).toThrow()
+      })
+
+      test('returns true for the day of the default `selectedDate` state', () => {
+        const today = getDate(kalendaryo.state.selectedDate)
+        expect(kalendaryo.isHighlightedDay(today)).toBe(true)
+      })
+
+      test('returns true for days that are equal to the `selectedDate`\'s day', () => {
+        const nextMonth = addMonths(kalendaryo.state.selectedDate, 1)
+        const prevMonth = subMonths(kalendaryo.state.selectedDate, 1)
+        const next2Months = addMonths(kalendaryo.state.selectedDate, 2)
+        const prev2Months = subMonths(kalendaryo.state.selectedDate, 2)
+
+        expect(kalendaryo.isHighlightedDay(getDate(nextMonth))).toBe(true)
+        expect(kalendaryo.isHighlightedDay(getDate(prevMonth))).toBe(true)
+        expect(kalendaryo.isHighlightedDay(getDate(next2Months))).toBe(true)
+        expect(kalendaryo.isHighlightedDay(getDate(prev2Months))).toBe(true)
+      })
+
+      test('returns false for days that are not equal to the `selectedDates`\'s day', () => {
+        const tomorrow = addDays(kalendaryo.state.selectedDate, 1)
+        const yesterday = subDays(kalendaryo.state.selectedDate, 1)
+        const nextWeek = addDays(kalendaryo.state.selectedDate, 7)
+        const lastWeek = subDays(kalendaryo.state.selectedDate, 7)
+
+        expect(kalendaryo.isHighlightedDay(getDate(tomorrow))).toBe(false)
+        expect(kalendaryo.isHighlightedDay(getDate(yesterday))).toBe(false)
+        expect(kalendaryo.isHighlightedDay(getDate(nextWeek))).toBe(false)
+        expect(kalendaryo.isHighlightedDay(getDate(lastWeek))).toBe(false)
+      })
+    })
+
+    describe('#isSelectedDay', () => {
+      test('throws an exception when the `day` argument is not an integer', () => {
+        expect(() => kalendaryo.isSelectedDay(false)).toThrow()
+        expect(() => kalendaryo.isSelectedDay('')).toThrow()
+        expect(() => kalendaryo.isSelectedDay(0.5)).toThrow()
+      })
+
+      test('returns true if today is equal to the day, month, and year of the default `date` && `selectedDate` state', () => {
+        const today = getDate(kalendaryo.state.selectedDate)
+        expect(kalendaryo.isSelectedDay(today)).toBe(true)
+      })
+
+      test('returns true if the day is 23 and the `date` && `selectedDate` states are in May 23, 1996', () => {
+        kalendaryo.selectDate(birthday)
+        expect(kalendaryo.isSelectedDay(23)).toBe(true)
+      })
+
+      test('returns false if the day of the `selectedDate` is not equal to the `date`\'s', () => {
+        const today = getDate(dateToday)
+        const kalendaryoDateNextMonth = kalendaryo.getDateNextMonth()
+        const kalendaryoDatePrevMonth = kalendaryo.getDatePrevMonth()
+        const kalendaryoDateNextYear = kalendaryo.getDateNextMonth(12)
+
+        kalendaryo.setDate(kalendaryoDateNextMonth)
+        expect(kalendaryo.isSelectedDay(today)).toBe(false)
+
+        kalendaryo.setDate(kalendaryoDatePrevMonth)
+        expect(kalendaryo.isSelectedDay(today)).toBe(false)
+
+        kalendaryo.setDate(kalendaryoDateNextYear)
+        expect(kalendaryo.isSelectedDay(today)).toBe(false)
       })
     })
   })
