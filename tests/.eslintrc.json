@@ -17,6 +17,8 @@
     "setDate": true,
     "getComponentInstance": true,
     "getComponent": true,
+    "subDays": true,
+    "addDays": true,
     "getDay": true
   }
 }
