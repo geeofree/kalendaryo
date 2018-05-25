@@ -19,6 +19,10 @@
     "getComponent": true,
     "subDays": true,
     "addDays": true,
+    "startOfWeek": true,
+    "startOfMonth": true,
+    "isSameWeek": true,
+    "addWeeks": true,
     "getDay": true
   }
 }

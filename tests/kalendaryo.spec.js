@@ -154,20 +154,6 @@ describe('<Kalendaryo />', () => {
       })
     })
 
-    describe('#getDay', () => {
-      test("is equal to today's day when given no arguments", () => {
-        expect(kalendaryo.getDay()).toEqual(getDate(dateToday))
-      })
-
-      test('is equal to 23 given the argument: (new Date(1996, 4, 23))', () => {
-        expect(kalendaryo.getDay(birthday)).toEqual(23)
-      })
-
-      test('throws an error given the argument: (notADateObject)', () => {
-        expect(() => kalendaryo.getDay(false)).toThrow()
-      })
-    })
-
     describe('#getDaysInMonth', () => {
       test('throws an error on invalid date objects given the argument: (notADateObject)', () => {
         expect(() => kalendaryo.getDaysInMonth(false)).toThrow()
@@ -203,22 +189,28 @@ describe('<Kalendaryo />', () => {
         expect(kalendaryo.getWeeksInMonth()).toBeInstanceOf(Array)
       })
 
-      test('returns the correct number of days in the month of the current date', () => {
-        const totalDaysThisMonth = getDaysInMonth(dateToday)
-        const totalDaysToTest = kalendaryo.getWeeksInMonth()
-          .map((item) => item.length)
-          .reduce((a, b) => a + b)
+      test('returns the correct weeks for the current month of the current date by default', () => {
+        const firstDayOfMonth = startOfMonth(dateToday)
+        let weekOfMonth = startOfWeek(firstDayOfMonth)
 
-        expect(totalDaysToTest).toEqual(totalDaysThisMonth)
+        kalendaryo.getWeeksInMonth().forEach(week => {
+          week.forEach((day) => {
+            expect(isSameWeek(day.dateValue, weekOfMonth)).toBe(true)
+          })
+          weekOfMonth = addWeeks(weekOfMonth, 1)
+        })
       })
 
-      test('returns the correct number of days in the month of the date: \'May 23, 1996\'', () => {
-        const totalDaysInBirthdate = getDaysInMonth(birthday)
-        const totalDaysToTest = kalendaryo.getWeeksInMonth()
-          .map((item) => item.length)
-          .reduce((a, b) => a + b)
+      test('returns the correct weeks for the date of May 23, 1996', () => {
+        const firstDayOfMonth = startOfMonth(birthday)
+        let weekOfMonth = startOfWeek(firstDayOfMonth)
 
-        expect(totalDaysToTest).toEqual(totalDaysInBirthdate)
+        kalendaryo.getWeeksInMonth(birthday).forEach(week => {
+          week.forEach((day) => {
+            expect(isSameWeek(day.dateValue, weekOfMonth)).toBe(true)
+          })
+          weekOfMonth = addWeeks(weekOfMonth, 1)
+        })
       })
     })
 
