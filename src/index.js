@@ -42,6 +42,8 @@ class Kalendaryo extends Component {
   static propTypes = {
     render: pt.func.isRequired,
     onChange: pt.func,
+    onDateChange: pt.func,
+    onSelectedChange: pt.func,
     defaultFormat: pt.string,
     startingDate: props =>
       !isDate(props.startingDate) ? new DateError() : null
@@ -166,11 +168,19 @@ class Kalendaryo extends Component {
   }
 
   componentDidUpdate (_, prevState) {
-    const { onChange } = this.props
+    const { onChange, onDateChange, onSelectedChange } = this.props
 
     const dateChanged = !isEqualDates(prevState.date, this.state.date)
     const selectedDateChanged = !isEqualDates(prevState.selectedDate, this.state.selectedDate)
     const stateUpdated = dateChanged || selectedDateChanged
+
+    if (dateChanged && onDateChange) {
+      onDateChange(this.state.date)
+    }
+
+    if (selectedDateChanged && onSelectedChange) {
+      onSelectedChange(this.state.selectedDate)
+    }
 
     if (stateUpdated && onChange) {
       onChange(this.state)
