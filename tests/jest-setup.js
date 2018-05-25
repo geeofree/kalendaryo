@@ -9,6 +9,10 @@ import {
   subMonths,
   getDate,
   getDaysInMonth,
+  startOfWeek,
+  startOfMonth,
+  isSameWeek,
+  addWeeks,
   getMonth,
   setDate,
   addDays,
@@ -38,6 +42,10 @@ global.setDate = setDate
 global.addDays = addDays
 global.subDays = subDays
 global.getDay = getDay
+global.startOfWeek = startOfWeek
+global.startOfMonth = startOfMonth
+global.isSameWeek = isSameWeek
+global.addWeeks = addWeeks
 global.getComponent = getComponent
 global.getComponentInstance = (props, renderFn = shallow, Component = Kalendaryo) =>
   getComponent(props, renderFn, Component).instance()
