@@ -78,6 +78,62 @@ describe('<Kalendaryo />', () => {
         expect(onChange).not.toHaveBeenCalled()
       })
     })
+
+    describe('#onDateChange', () => {
+      test('prints a console error for non-function type values', () => {
+        getComponentInstance({ onDateChange: false })
+        expect(console.warn).toThrow()
+      })
+
+      test('it is invoked when `date` state changes', () => {
+        const { defaultFormat } = props
+        const onDateChange = jest.fn()
+        const component = getComponent({ onDateChange }, mount)
+
+        component.setState({ date: birthday })
+        expect(onDateChange).toHaveBeenCalled()
+
+        const dateValue = format(onDateChange.mock.calls[0][0], defaultFormat)
+        const birthdayValue = format(birthday, defaultFormat)
+        expect(dateValue).toBe(birthdayValue)
+      })
+
+      test('it is not invoked when the `date` state does not change', () => {
+        const onDateChange = jest.fn()
+        const component = getComponentInstance({ onDateChange }, mount)
+
+        component.setState(prevState => prevState)
+        expect(onDateChange).not.toHaveBeenCalled()
+      })
+    })
+
+    describe('#onSelectedChange', () => {
+      test('prints a console error for non-function type values', () => {
+        getComponentInstance({ onSelectedChange: false })
+        expect(console.warn).toThrow()
+      })
+
+      test('it is invoked when `selectDate` state changes', () => {
+        const { defaultFormat } = props
+        const onSelectedChange = jest.fn()
+        const component = getComponent({ onSelectedChange }, mount)
+
+        component.setState({ selectedDate: birthday })
+        expect(onSelectedChange).toHaveBeenCalled()
+
+        const dateValue = format(onSelectedChange.mock.calls[0][0], defaultFormat)
+        const birthdayValue = format(birthday, defaultFormat)
+        expect(dateValue).toBe(birthdayValue)
+      })
+
+      test('it is not invoked when the `date` state does not change', () => {
+        const onSelectedChange = jest.fn()
+        const component = getComponentInstance({ onSelectedChange }, mount)
+
+        component.setState(prevState => prevState)
+        expect(onSelectedChange).not.toHaveBeenCalled()
+      })
+    })
   })
 
   describe('Methods', () => {
