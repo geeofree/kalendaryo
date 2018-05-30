@@ -596,7 +596,10 @@ function MyCalendar(kalendaryo) {
 ```
 
 ## Examples
-TO DO: Add examples
+TO DO: Add working example links
+* [Date Picker](#)
+* [Date Range Picker](#)
+* [Downshift-Kalendaryo Integration](#)
 
 ## Inspiration
 This project is inspired by the react component package,  [Downshift](https://github.com/paypal/downshift) by [Kent C. Dodds](https://twitter.com/kentcdodds), which is a component that exposes various things through a render prop that lets you build autocomplete, dropdown, combo box, or any components that you can imagine to build through its API.
