@@ -224,11 +224,10 @@ describe('<Kalendaryo />', () => {
         expect(kalendaryo.getDaysInMonth()).toHaveLength(totalDaysThisMonth)
       })
 
-      test('has array items of objects with key/value pairs of { label: dayNumber, dateValue: dateObjValueOfDay, dayOfWeek: dayOfWeekNumber }', () => {
+      test('has array items of objects with key/value pairs of { label: integer, dateValue: date }', () => {
         kalendaryo.getDaysInMonth().forEach(day => {
           expect(day.label).toEqual(getDate(day.dateValue))
           expect(day.dateValue).toBeInstanceOf(Date)
-          expect(day.dayOfWeek).toEqual(getDay(day.dateValue))
           expect(format(day.dateValue, 'MM/DD/YY')).toEqual(
             format(setDate(day.dateValue, day.label), 'MM/DD/YY')
           )
