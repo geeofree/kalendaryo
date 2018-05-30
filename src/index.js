@@ -10,7 +10,6 @@ import {
   startOfMonth,
   endOfMonth,
   eachDay,
-  getDay,
   isWithinRange,
   differenceInDays,
   addWeeks,
@@ -20,12 +19,9 @@ import {
   isSameMonth
 } from 'date-fns'
 
-import { DateError } from './utils'
-
 const dateToDayObjects = dateValue => ({
   dateValue,
-  label: getDate(dateValue),
-  dayOfWeek: getDay(dateValue)
+  label: getDate(dateValue)
 })
 
 class Kalendaryo extends Component {
@@ -46,7 +42,7 @@ class Kalendaryo extends Component {
     onSelectedChange: pt.func,
     defaultFormat: pt.string,
     startingDate: props =>
-      !isDate(props.startingDate) ? new DateError() : null
+      !isDate(props.startingDate) ? new Error('Value is not an instance of Date') : null
   }
 
   getFormattedDate = (arg = this.state.date, dateFormat) => {
@@ -98,12 +94,12 @@ class Kalendaryo extends Component {
   }
 
   getDaysInMonth = (date = this.state.date) => {
-    if (!isDate(date)) throw new DateError()
+    if (!isDate(date)) throw new Error('Value is not an instance of Date')
     return eachDay(startOfMonth(date), endOfMonth(date)).map(dateToDayObjects)
   }
 
   getWeeksInMonth = (date = this.state.date) => {
-    if (!isDate(date)) throw new DateError()
+    if (!isDate(date)) throw new Error('Value is not an instance of Date')
 
     const firstDayOfMonth = startOfMonth(date)
     const firstDayOfFirstWeek = startOfWeek(firstDayOfMonth)
@@ -128,23 +124,23 @@ class Kalendaryo extends Component {
   }
 
   setDate = date => {
-    if (!isDate(date)) throw new DateError()
+    if (!isDate(date)) throw new Error('Value is not an instance of Date')
     this.setState({ date })
   }
 
   setSelectedDate = selectedDate => {
-    if (!isDate(selectedDate)) throw new DateError()
+    if (!isDate(selectedDate)) throw new Error('Value is not an instance of Date')
     this.setState({ selectedDate })
   }
 
   selectDate = date => {
-    if (!isDate(date)) throw new DateError()
+    if (!isDate(date)) throw new Error('Value is not an instance of Date')
     this.setState({ date, selectedDate: date })
   }
 
   dateIsInRange = (date, startDate, endDate) => {
     if (!isDate(date) || !isDate(startDate) || !isDate(endDate)) {
-      throw new DateError()
+      throw new Error('Value is not an instance of Date')
     }
     return differenceInDays(startDate, endDate) < 1
       ? isWithinRange(date, startDate, endDate)
