@@ -14,7 +14,7 @@ You want a date component that's: <br />
   :heavy_check_mark: Flexible for your use case <br />
 
 ## This solution
-**Kalendaryo** is a React component that provides the toolsets for you to build calendar components with that works for your use cases. It has no layout or functionalities other than the ones you can think of to build through its API.
+**Kalendaryo** is a React component that provides the toolsets for you to build calendar components that works for your use cases. It has no layout or functionalities other than the ones you can think of to build through its API.
 <br /> <br />
 The component uses the [render props](https://reactjs.org/docs/render-props.html) pattern which helps in exposing various variables for you to use and also gives you the flexibility to build your calendar's layout anyway you want due to its inline rendering nature.
 <br /> <br />
@@ -30,12 +30,13 @@ See the [Basic Usage](#basic-usage) section to see how you can build a basic cal
     * [#date](#date)
     * [#selectedDate](#selecteddate)
   * [Props](#props)
-    * [#startingDate](#startingdate)
+    * [#startCurrentDateAt](#startcurrentdateat)
     * [#defaultFormat](#defaultformat)
     * [#onChange](#onchange)
     * [#onDateChange](#ondatechange)
     * [#onSelectedChange](#onselectedchange)
     * [#render](#render)
+    * [Passing variables to the render prop](#passing-variables-to-the-render-prop)
   * [Methods](#methods)
     * [#getFormattedDate](#getformatteddate)
     * [#getDateNextMonth](#getdatenextmonth)
@@ -44,10 +45,7 @@ See the [Basic Usage](#basic-usage) section to see how you can build a basic cal
     * [#getWeeksInMonth](#getweeksinmonth)
     * [#setDate](#setdate)
     * [#setSelectedDate](#setselecteddate)
-    * [#selectDate](#selectdate)
-    * [#dateIsInRange](#dateisinrange)
-    * [#isHighlightedDay](#ishighlightedday)
-    * [#isSelectedDay](#isselectedday)
+    * [#pickDate](#pickdate)
 * [Examples](#examples)
 * [Inspiration](#inspiration)
 
@@ -61,7 +59,7 @@ npm i -d kalendaryo // <-- for npm peeps
 yarn add kalendaryo // <-- for yarn peeps
 ```
 
-After doing all of those, hopefully everything should work and be ready for use :thumbsup: :eyes: :ok_hand:
+After doing all of those, hopefully everything should work and be ready for use :thumbsup:
 
 ## Basic Usage
 ```js
@@ -79,8 +77,7 @@ function MyCalendar(kalendaryo) {
     getDatePrevMonth,
     getDateNextMonth,
     setSelectedDate,
-    setDate,
-    isSelectedDay
+    setDate
   } = kalendaryo
 
   const currentDate = getFormattedDate("MMMM YYYY")
@@ -98,7 +95,6 @@ function MyCalendar(kalendaryo) {
    *      2.1 A row for the label of the days of a week
    *      2.2 Rows containing the days of each week in the current date's month where you can:
    *          2.2.1 Select a date by clicking on a day
-   *          2.2.2 Highlight the selected day
    */
   return (
     <div className="my-calendar">
@@ -135,8 +131,6 @@ function MyCalendar(kalendaryo) {
                 key={day.label}
                 // (2.2.1)
                 onClick={selectDay(day.dateValue)}
-                // (2.2.2)
-                className={isSelectedDay(day.label) ? "day is-selected" : "day"}
               >
                 {day.label}
               </div>
@@ -162,16 +156,16 @@ This section contains descriptions of the various things the `<Kalendaryo />` co
 #### #date
 <pre><b>type:</b> Date</pre>
 
-Is the state for the *current date* the component is in. By convention, you should only change this when the calendar you're building changes it's current date, *i.e.* moving to and from a month or year on the calendar. Defaults to today's date if [startingDate](#startingdate) prop is not set.
+Is the state for the *current date* the component is in. By convention, you should only change this when the calendar you're building changes it's current date, *i.e.* moving to and from a month or year on the calendar. Defaults to today's date if [startCurrentDateAt](#startcurrentdateat) prop is not set.
 <br />
 
 #### #selectedDate
 <pre><b>type:</b> Date</pre>
 
-Is the state for the *selected date* on the component. By convention, you should only change this when the calendar you're building receives a date selection input from the user, *i.e.* selecting a day on the calendar. Defaults to today's date if [startingDate](#startingdate) prop is not set.
+Is the state for the *selected date* on the component. By convention, you should only change this when the calendar you're building receives a date selection input from the user, *i.e.* selecting a day on the calendar. Defaults to today's date if [startCurrentDateAt](#startcurrentdateat) prop is not set.
 
 ### Props
-#### #startingDate
+#### #startCurrentDateAt
 <pre>
 <b>type:</b> Date
 <b>required:</b> false
@@ -183,7 +177,7 @@ Modifies the initial value of [`#date`](#date) & [`#selectedDate`](#selecteddate
 ```js
 const birthday = new Date(1988, 4, 27)
 
-<Kalendaryo startingDate={birthday} />
+<Kalendaryo startCurrentDateAt={birthday} />
 ```
 
 #### #defaultFormat
@@ -249,7 +243,7 @@ const logSelectedDateState = (selectedDate) => console.log(selectedDate)
 <b>required:</b> true
 </pre>
 
-Callback for rendering your date component. This function receives an object which has `<Kalendaryo />`'s [`state`](#state) and [`methods`](#methods).
+Callback for rendering your date component. This function receives an object which has `<Kalendaryo />`'s [`state`](#state), [`methods`](#methods), as well as props you pass that are invalid(see [passing variables to the render prop](#passing-variables-to-the-render-prop) for more information).
 
 ```js
 const MyCalendar = (kalendaryo) => {
@@ -258,6 +252,85 @@ const MyCalendar = (kalendaryo) => {
 }
 
 <Kalendaryo render={MyCalendar} />
+```
+
+#### Passing variables to the render prop
+Sometimes you may need to have states other than the [`#date`](#date) and [`#selectedDate`](#selectedDate) state, i.e for a date range calendar component you may need to have a state for `startDate` and `endDate` and may need to create the calendar component as a method inside the date range calendar's class like so:
+
+```js
+class DateRangeCalendar extends React.Component {
+  state = {
+    startDate: null,
+    endDate: null
+  }
+
+  Calendar = () => {
+    const { startDate, endDate } = this.state
+    return // Your calendar layout
+  }
+
+  setDateRange = (selectedDate) => {
+    // Logic for updating the start and end date states
+  }
+
+  render() {
+    return <Kalendaryo onSelectedChange={this.setDateRange} render={this.Calendar} />
+  }
+}
+```
+
+This approach however, leaves the `Calendar` render callback tightly coupled to the `DateRangeCalendar` component and bloats it with an unnecessary method for rendering UI.
+
+An approach I decided to go for and highly suggest is to pass any variables you want to pass through the `Kalendaryo` component's prop, any invalid or unknown props that `Kalendaryo` isn't concerned about gets passed to the [`#render`](#render) callback's object parameter, this makes the `render` callback more pure and simple!
+
+```js
+class DateRangeCalendar extends React.Component {
+  state = {
+    startDate: null,
+    endDate: null
+  }
+
+  setDateRange = (selectedDate) => {
+    // Logic for updating the start and end date states
+  }
+
+  render() {
+    return (
+      <Kalendaryo
+        startDate={this.state.startDate}
+        endDate={this.state.endDate}
+        onSelectedChange={this.setDateRange}
+        render={Calendar}
+      />
+    )
+  }
+}
+
+// Pure and simple!
+function Calendar(kalendaryo) {
+  const { startDate, endDate } = kalendaryo
+  return // Your calendar component
+}
+```
+
+You can also use this functionality to add helper functions inside the `render` callback!
+
+```js
+import { differenceInDays, isWithinRange } from 'date-fns'
+
+const dateIsInRange = (date, startDate, endDate) => {
+  if (!isDate(data) || !isDate(startDate) || !isDate(endDate)) {
+    throw new Error('Argument is not an instance of Date')
+  }
+  return differenceInDays(startDate, endDate) < 1 && isWithinRange(date, startDate, endDate)
+}
+
+function MyCalendar(kalendaryo) {
+  const { dateIsInRange } = kalendaryo
+  return // Your calendar layout
+}
+
+<Kalendaryo dateIsInRange={dateIsInRange} render={MyCalendar} />
 ```
 
 ### Methods
@@ -347,11 +420,11 @@ function MyCalendar(kalendaryo) {
 <b>type:</b> func(date?: Date): Array: { label: Integer, dateValue: Date }
 </pre>
 
-Returns an array of objects that represents each of the days in the given date. You can invoke this in two ways:
+Returns an array of *day* objects which are objects that have data for the `label` of the day as well as the `dateValue` for that day. You can invoke this in two ways:
 
-  * `getDaysInMonth()` - When **no argument** is given, by default `#getDaysInMonth` returns an array of objects that represent each day of the [`#date`](#date) state's value
+  * `getDaysInMonth()` - When **no argument** is given, by default `#getDaysInMonth` returns an array of day objects from the [`#date`](#date) state's value
 
-  * `getDaysInMonth(date)` - When a **date object** is given, `#getDaysInMonth` returns an array of objects that represent each day of the given date object
+  * `getDaysInMonth(date)` - When a **date object** is given, `#getDaysInMonth` returns an array of day objects for the given date
 
 **NOTE:** Throws an error if an invalid argument value is passed to the function
 
@@ -379,14 +452,14 @@ function MyCalendar(kalendaryo) {
 
 #### #getWeeksInMonth
 <pre>
-<b>type:</b> func(date?: Date): Array: Array: { label: Integer, dateValue: Date }
+<b>type:</b> func(date?: Date): WeekArray: DayArray: { label: Integer, dateValue: Date }
 </pre>
 
-Returns an array of each weeks, which are arrays that contain objects that represent each day of the week on the month of the given date. You can invoke this in two ways:
+Returns an array of each weeks for the month of the given date, each array of weeks contain an array of days for that week. You can invoke this in two ways:
 
-  * `getWeeksInMonth()` - When **no argument** is given, by default `#getWeeksInMonth` returns an array of week arrays that contains objects which represent each day of the [`#date`](#date) state's value
+  * `getWeeksInMonth()` - When **no argument** is given, by default `#getWeeksInMonth` returns an array of weeks for the month of the [`#date`](#date) state's value
 
-  * `getWeeksInMonth(date)` - When a **date object** is given, `#getWeeksInMonth` returns an array of week arrays that contains objects which represent each day of the given date object
+  * `getWeeksInMonth(date)` - When a **date object** is given, `#getWeeksInMonth` returns an array of weeks for the month of the given date value
 
 **NOTE:** Throws an error if an invalid argument value is passed to the function
 
@@ -470,7 +543,7 @@ function MyCalendar(kalendaryo) {
 <Kalendaryo render={MyCalendar} />
 ```
 
-#### #selectDate
+#### #pickDate
 <pre>
 <b>type:</b> func(date: Date): void
 </pre>
@@ -484,7 +557,7 @@ function MyCalendar(kalendaryo) {
   const birthday = new Date(1988, 4, 27)
   const currentDate = kalendaryo.getFormattedDate()
   const selectedDate = kalendaryo.getFormattedDate(kalendaryo.selectedDate)
-  const selectBday = () => kalendaryo.selectDate(birthday)
+  const selectBday = () => kalendaryo.pickDate(birthday)
 
   return (
     <div>
@@ -498,108 +571,11 @@ function MyCalendar(kalendaryo) {
 <Kalendaryo render={MyCalendar} />
 ```
 
-#### #dateIsInRange
-<pre>
-<b>type:</b> func(date: Date, startDate: Date, endDate: Date): Boolean
-</pre>
-
-Returns true if the first argument is within the range of the given `startDate` and `endDate` arguments, false otherwise or if `endDate` is a date before `startDate`
-
-**NOTE:** Throws an error if an invalid argument value is passed to the function
-
-```js
-function MyCalendar(kalendaryo) {
-  const currentDate = kalendaryo.date
-  const nextMonth = kalendaryo.getDateNextMonth()
-  const weeksInCurrentMonth = kalendaryo.getWeeksInMonth()
-  const dateIsWithinNextMonth = (date) => kalendaryo.dateIsInRange(date, currentDate, nextMonth)
-
-  return (
-    <div>
-      {weeksInCurrentMonth.map((week, i) => (
-        <div class="week" key={i}>
-          {week.map((day) => (
-            <p
-              key={day.label}
-              disabled={dateIsWithinNextMonth(day.dateValue) === false}
-            >
-              {day.label}
-            </p>
-          ))}
-        </div>
-      ))}
-    </div>
-  )
-}
-
-<Kalendaryo render={MyCalendar} />
-```
-
-#### #isHighlightedDay
-<pre>
-<b>type:</b> func(day: Integer): Boolean
-</pre>
-
-Returns `true` if the given day is equal to the day of the [`#selectedDate`](#selecteddate) state, `false` otherwise
-
-**NOTE:** Throws an error if an invalid argument value is passed to the function
-
-```js
-function MyCalendar(kalendaryo) {
-  const daysInCurrMonth = kalendaryo.getDaysInMonth()
-
-  return (
-    <div>
-      {daysInCurrMonth.map((day) => (
-        <p
-          key={day.label}
-          className={kalendaryo.isHighlightedDay(day.label) ? "day highlighted" : "day"}
-        >
-          {day.label}
-        </p>
-      ))}
-    </div>
-  )
-}
-
-<Kalendaryo render={MyCalendar} />
-```
-
-#### #isSelectedDay
-<pre>
-<b>type:</b> func(day: Integer): Boolean
-</pre>
-
-Same as [`#isHighlightedDay`](#ishighlightedday) but also checks if the day on the [`#selectedDate`](#selecteddate) state is on the same month & year of the current value in the [`#date`](#date) state
-
-**NOTE:** Throws an error if an invalid argument value is passed to the function
-
-```js
-function MyCalendar(kalendaryo) {
-  const daysInCurrMonth = kalendaryo.getDaysInMonth()
-
-  return (
-    <div>
-      {daysInCurrMonth.map((day) => (
-        <p
-          key={day.label}
-          className={kalendaryo.isSelectedDay(day.label) ? "day selected" : "day"}
-        >
-          {day.label}
-        </p>
-      ))}
-    </div>
-  )
-}
-
-<Kalendaryo render={MyCalendar} />
-```
-
 ## Examples
 TO DO: Add examples
 
 ## Inspiration
-This project is inspired by the react component package,  [Downshift](https://github.com/paypal/downshift) by [Kent C. Dodds](https://twitter.com/kentcdodds), which is a component that exposes various things through a render prop that lets you build autocomplete, dropdown, combo box, or any components that you can imagine to build through its API.
+This project is inspired by the react component package,  [Downshift](https://github.com/paypal/downshift) by [Kent C. Dodds](https://twitter.com/kentcdodds), a component library that exposes various things through a render prop that which lets you build autocomplete, dropdown, combobox, or any components that you can imagine to build through its API.
 <br /> <br />
 Without it, I would not have been able to create this very first OSS project of mine, so thanks Mr. Dodds and Contributors for it! :heart:
 

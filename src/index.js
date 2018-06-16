@@ -10,12 +10,9 @@ import {
   startOfMonth,
   endOfMonth,
   eachDay,
-  isWithinRange,
-  differenceInDays,
   addWeeks,
   startOfWeek,
   endOfWeek,
-  isSameYear,
   isSameMonth
 } from 'date-fns'
 
@@ -26,12 +23,12 @@ const dateToDayObjects = dateValue => ({
 
 class Kalendaryo extends Component {
   state = {
-    date: this.props.startingDate,
-    selectedDate: this.props.startingDate
+    date: this.props.startCurrentDateAt,
+    selectedDate: this.props.startCurrentDateAt
   }
 
   static defaultProps = {
-    startingDate: new Date(),
+    startCurrentDateAt: new Date(),
     defaultFormat: 'MM/DD/YY'
   }
 
@@ -41,8 +38,8 @@ class Kalendaryo extends Component {
     onDateChange: pt.func,
     onSelectedChange: pt.func,
     defaultFormat: pt.string,
-    startingDate: props =>
-      !isDate(props.startingDate) ? new Error('Value is not an instance of Date') : null
+    startCurrentDateAt: props =>
+      !isDate(props.startCurrentDateAt) ? new Error('Value is not an instance of Date') : null
   }
 
   getFormattedDate = (arg = this.state.date, dateFormat) => {
@@ -133,34 +130,9 @@ class Kalendaryo extends Component {
     this.setState({ selectedDate })
   }
 
-  selectDate = date => {
+  pickDate = date => {
     if (!isDate(date)) throw new Error('Value is not an instance of Date')
     this.setState({ date, selectedDate: date })
-  }
-
-  dateIsInRange = (date, startDate, endDate) => {
-    if (!isDate(date) || !isDate(startDate) || !isDate(endDate)) {
-      throw new Error('Value is not an instance of Date')
-    }
-    return differenceInDays(startDate, endDate) < 1
-      ? isWithinRange(date, startDate, endDate)
-      : false
-  }
-
-  isHighlightedDay = (day) => {
-    if (Number.isInteger(day) === false) {
-      throw new Error('Not a valid number')
-    }
-    return getDate(this.state.selectedDate) === day
-  }
-
-  isSelectedDay = (day) => {
-    const { date, selectedDate } = this.state
-    return (
-      isSameMonth(date, selectedDate) &&
-      isSameYear(date, selectedDate) &&
-      this.isHighlightedDay(day)
-    )
   }
 
   componentDidUpdate (_, prevState) {
@@ -184,8 +156,41 @@ class Kalendaryo extends Component {
   }
 
   render () {
-    const { state, props, ...methods } = this
-    return this.props.render({ ...state, ...methods })
+    const {
+      state,
+      props,
+      getFormattedDate,
+      getDateNextMonth,
+      getDatePrevMonth,
+      getDaysInMonth,
+      getWeeksInMonth,
+      setDate,
+      setSelectedDate,
+      pickDate
+    } = this
+
+    const {
+      startCurrentDateAt,
+      defaultFormat,
+      onChange,
+      onDateChange,
+      onSelectedChange,
+      render,
+      ...rest
+    } = props
+
+    return render({
+      ...rest,
+      ...state,
+      getFormattedDate,
+      getDateNextMonth,
+      getDatePrevMonth,
+      getDaysInMonth,
+      getWeeksInMonth,
+      setDate,
+      setSelectedDate,
+      pickDate
+    })
   }
 }
 
