@@ -143,7 +143,7 @@ function MyCalendar(kalendaryo) {
 }
 ```
 
-See this basic usage snippet in action [here](https://codesandbox.io/s/xpwzxo2my4)!
+See this basic usage snippet in action [here](https://codesandbox.io/s/vjkq15zj0y)!
 
 ## API
 This section contains descriptions of the various things the `<Kalendaryo />` component has to offer which are split into three parts:
@@ -572,10 +572,12 @@ function MyCalendar(kalendaryo) {
 ```
 
 ## Examples
-TO DO: Add examples
+* [Basic Calendar](https://codesandbox.io/s/vjkq15zj0y)
+* [Date Range Calendar](https://codesandbox.io/s/7yk8x627j6)
+* [Date Picker Input (Downshift x Kalendaryo)](https://codesandbox.io/s/j47zv28xkw)
 
 ## Inspiration
-This project is inspired by the react component package,  [Downshift](https://github.com/paypal/downshift) by [Kent C. Dodds](https://twitter.com/kentcdodds), a component library that exposes various things through a render prop that which lets you build autocomplete, dropdown, combobox, or any components that you can imagine to build through its API.
+This project is heavily inspired from [Downshift](https://github.com/paypal/downshift) by [Kent C. Dodds](https://twitter.com/kentcdodds), a component library that uses render props to expose certain APIs for you to build flexible and accessible autocomplete, dropdown, combobox, etc. components.
 <br /> <br />
 Without it, I would not have been able to create this very first OSS project of mine, so thanks Mr. Dodds and Contributors for it! :heart:
 
