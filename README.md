@@ -32,6 +32,7 @@ See the [Basic Usage](#basic-usage) section to see how you can build a basic cal
   * [Props](#props)
     * [#startCurrentDateAt](#startcurrentdateat)
     * [#defaultFormat](#defaultformat)
+    * [#startWeekAt](#firstdayofweek)
     * [#onChange](#onchange)
     * [#onDateChange](#ondatechange)
     * [#onSelectedChange](#onselectedchange)
@@ -184,7 +185,7 @@ const birthday = new Date(1988, 4, 27)
 <pre>
 <b>type:</b> String
 <b>required:</b> false
-<b>default</b> 'MM/DD/YY'
+<b>default:</b> 'MM/DD/YY'
 </pre>
 
 Modifies the default format value on the [`#getFormattedDate`](#getformatteddate) method. Accepts any format that [date-fns' `format` function](https://date-fns.org/v1.29.0/docs/format) can support.
@@ -193,6 +194,21 @@ Modifies the default format value on the [`#getFormattedDate`](#getformatteddate
 const myFormat = 'yyyy-mm-dd'
 
 <Kalendaryo defaultFormat={myFormat} />
+```
+
+#### #startWeekAt
+<pre>
+<b>type:</b> Number
+<b>required:</b> false
+<b>default:</b> 0
+</pre>
+
+Modifies the starting day index of the weeks returned from the [`#getWeeksInMonth`](#getweeksinmonth). Defaults to `0 (sunday)`
+
+```js
+const monday = 1
+
+<Kalendaryo startWeekAt={monday} />
 ```
 
 #### #onChange
@@ -452,21 +468,25 @@ function MyCalendar(kalendaryo) {
 
 #### #getWeeksInMonth
 <pre>
-<b>type:</b> func(date?: Date): WeekArray: DayArray: { label: Integer, dateValue: Date }
+<b>type:</b> func(date?: Date | startingDayIndex?: Integer, startingDayIndex?: Integer): WeekArray: DayArray: { label: Integer, dateValue: Date }
 </pre>
 
-Returns an array of each weeks for the month of the given date, each array of weeks contain an array of days for that week. You can invoke this in two ways:
+Returns an array of each weeks for the month of the given date, each array of weeks contain an array of days for that week. You can invoke this in four ways:
 
-  * `getWeeksInMonth()` - When **no argument** is given, by default `#getWeeksInMonth` returns an array of weeks for the month of the [`#date`](#date) state's value
+  * `getWeeksInMonth()` - Returns an array for the weeks in the month of the [`#date`](#date) state with the days starting at the value of [`#startWeekAt`](#startweekat) prop
 
-  * `getWeeksInMonth(date)` - When a **date object** is given, `#getWeeksInMonth` returns an array of weeks for the month of the given date value
+  * `getWeeksInMonth(date)` - Returns an array for the weeks in the month of the given `date` argument, with the days starting at the value of [`#startWeekAt`](#startweekat) prop
+
+  * `getWeeksInMonth(startingDayIndex)` - Returns an array for the weeks in the month of the [`#date`](#date) state, with the days starting at the value of the given `startingDayIndex` argument
+
+  * `getWeeksInMonth(date, startingDayIndex)` - Returns an array for the weeks in the given `date` argument, with the days starting at the value of the `startingDayIndex` argument
 
 **NOTE:** Throws an error if an invalid argument value is passed to the function
 
 ```js
 function MyCalendar(kalendaryo) {
   const prevMonth = kalendaryo.getDateNextMonth()
-  const weeksPrevMonth = kalendaryo.getWeeksInMonth(prevMonth)
+  const weeksPrevMonth = kalendaryo.getWeeksInMonth(prevMonth, 1)
 
   return (
     <div>

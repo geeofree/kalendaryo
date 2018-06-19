@@ -314,21 +314,41 @@ describe('<Kalendaryo />', () => {
     })
 
     describe('#getWeeksInMonth', () => {
-      test('throws an error when given an invalid date value', () => {
+      test('throws an error when the first argument given is neither a `Date` or an `Integer`', () => {
         expect(() => kalendaryo.getWeeksInMonth(false)).toThrow()
+        expect(() => kalendaryo.getWeeksInMonth('string')).toThrow()
+      })
+
+      test('throws an error when the second argument given is not an `Integer`', () => {
+        expect(() => kalendaryo.getWeeksInMonth(birthday, false)).toThrow()
+        expect(() => kalendaryo.getWeeksInMonth(birthday, 'string')).toThrow()
       })
 
       test('returns an Array', () => {
         expect(kalendaryo.getWeeksInMonth()).toBeInstanceOf(Array)
       })
 
-      test('returns the correct weeks for the current month of the current date by default', () => {
+      test('returns the correct weeks for the month of the current date state by default', () => {
         const firstDayOfMonth = startOfMonth(dateToday)
         let weekOfMonth = startOfWeek(firstDayOfMonth)
 
         kalendaryo.getWeeksInMonth().forEach(week => {
           week.forEach((day) => {
             expect(isSameWeek(day.dateValue, weekOfMonth)).toBe(true)
+          })
+          weekOfMonth = addWeeks(weekOfMonth, 1)
+        })
+      })
+
+      test('starts the weeks to Monday if `startWeekAt` prop is 1', () => {
+        const component = getComponentInstance({ startWeekAt: 1 })
+
+        const firstDayOfMonth = startOfMonth(dateToday)
+        let weekOfMonth = startOfWeek(firstDayOfMonth, { weekStartsOn: 1 })
+
+        component.getWeeksInMonth().forEach(week => {
+          week.forEach((day) => {
+            expect(isSameWeek(day.dateValue, weekOfMonth, { weekStartsOn: 1 })).toBe(true)
           })
           weekOfMonth = addWeeks(weekOfMonth, 1)
         })
