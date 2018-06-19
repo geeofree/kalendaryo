@@ -32,6 +32,7 @@ See the [Basic Usage](#basic-usage) section to see how you can build a basic cal
   * [Props](#props)
     * [#startCurrentDateAt](#startcurrentdateat)
     * [#defaultFormat](#defaultformat)
+    * [#firstDayOfWeek](#firstdayofweek)
     * [#onChange](#onchange)
     * [#onDateChange](#ondatechange)
     * [#onSelectedChange](#onselectedchange)
@@ -193,6 +194,19 @@ Modifies the default format value on the [`#getFormattedDate`](#getformatteddate
 const myFormat = 'yyyy-mm-dd'
 
 <Kalendaryo defaultFormat={myFormat} />
+```
+
+#### #firstDayOfWeek
+<pre>
+<b>type:</b> Number
+<b>required:</b> false
+<b>default</b> 0
+</pre>
+
+The index of the first day of the week (0 - Sunday)
+
+```js
+<Kalendaryo firstDayOfWeek={1} />
 ```
 
 #### #onChange

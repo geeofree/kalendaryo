@@ -28,6 +28,7 @@ class Kalendaryo extends Component {
   }
 
   static defaultProps = {
+    firstDayOfWeek: 0,
     startCurrentDateAt: new Date(),
     defaultFormat: 'MM/DD/YY'
   }
@@ -37,6 +38,7 @@ class Kalendaryo extends Component {
     onChange: pt.func,
     onDateChange: pt.func,
     onSelectedChange: pt.func,
+    firstDayOfWeek: pt.number,
     defaultFormat: pt.string,
     startCurrentDateAt: props =>
       !isDate(props.startCurrentDateAt) ? new Error('Value is not an instance of Date') : null
@@ -98,17 +100,19 @@ class Kalendaryo extends Component {
   getWeeksInMonth = (date = this.state.date) => {
     if (!isDate(date)) throw new Error('Value is not an instance of Date')
 
+    const { firstDayOfWeek } = this.props
+    const weekOptions = { weekStartsOn: firstDayOfWeek }
     const firstDayOfMonth = startOfMonth(date)
-    const firstDayOfFirstWeek = startOfWeek(firstDayOfMonth)
-    const lastDayOfFirstWeek = endOfWeek(firstDayOfMonth)
+    const firstDayOfFirstWeek = startOfWeek(firstDayOfMonth, weekOptions)
+    const lastDayOfFirstWeek = endOfWeek(firstDayOfMonth, weekOptions)
 
     const getWeeks = (startDay, endDay, weekArray = []) => {
       const week = eachDay(startDay, endDay).map(dateToDayObjects)
       const weeks = [...weekArray, week]
       const nextWeek = addWeeks(startDay, 1)
 
-      const firstDayNextWeek = startOfWeek(nextWeek)
-      const lastDayNextWeek = endOfWeek(nextWeek)
+      const firstDayNextWeek = startOfWeek(nextWeek, weekOptions)
+      const lastDayNextWeek = endOfWeek(nextWeek, weekOptions)
 
       if (isSameMonth(firstDayNextWeek, date)) {
         return getWeeks(firstDayNextWeek, lastDayNextWeek, weeks)

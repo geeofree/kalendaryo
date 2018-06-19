@@ -334,6 +334,20 @@ describe('<Kalendaryo />', () => {
         })
       })
 
+      test('returns the correct weeks for the current month of the current date by default with custom firstDayOfWeek', () => {
+        const component = getComponentInstance({ firstDayOfWeek: 1 })
+
+        const firstDayOfMonth = startOfMonth(dateToday)
+        let weekOfMonth = startOfWeek(firstDayOfMonth, { weekStartsOn: 1 })
+
+        component.getWeeksInMonth().forEach(week => {
+          week.forEach((day) => {
+            expect(isSameWeek(day.dateValue, weekOfMonth)).toBe(true)
+          })
+          weekOfMonth = addWeeks(weekOfMonth, 1)
+        })
+      })
+
       test('returns the correct weeks for the date of May 23, 1996', () => {
         const firstDayOfMonth = startOfMonth(birthday)
         let weekOfMonth = startOfWeek(firstDayOfMonth)
