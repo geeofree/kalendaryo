@@ -32,7 +32,7 @@ See the [Basic Usage](#basic-usage) section to see how you can build a basic cal
   * [Props](#props)
     * [#startCurrentDateAt](#startcurrentdateat)
     * [#defaultFormat](#defaultformat)
-    * [#startWeekAt](#firstdayofweek)
+    * [#startWeekAt](#startweekat)
     * [#onChange](#onchange)
     * [#onDateChange](#ondatechange)
     * [#onSelectedChange](#onselectedchange)
