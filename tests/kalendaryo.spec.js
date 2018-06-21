@@ -314,9 +314,10 @@ describe('<Kalendaryo />', () => {
     })
 
     describe('#getWeeksInMonth', () => {
-      test('throws an error when the first argument given is neither a `Date` or an `Integer`', () => {
+      test('throws an error when the first argument given is not a `Date`', () => {
         expect(() => kalendaryo.getWeeksInMonth(false)).toThrow()
         expect(() => kalendaryo.getWeeksInMonth('string')).toThrow()
+        expect(() => kalendaryo.getWeeksInMonth(1)).toThrow()
       })
 
       test('throws an error when the second argument given is not an `Integer`', () => {

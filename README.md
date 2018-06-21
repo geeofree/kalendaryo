@@ -468,16 +468,14 @@ function MyCalendar(kalendaryo) {
 
 #### #getWeeksInMonth
 <pre>
-<b>type:</b> func(date?: Date | startingDayIndex?: Integer, startingDayIndex?: Integer): WeekArray: DayArray: { label: Integer, dateValue: Date }
+<b>type:</b> func(date?: Date, startingDayIndex?: Integer): WeekArray: DayArray: { label: Integer, dateValue: Date }
 </pre>
 
-Returns an array of each weeks for the month of the given date, each array of weeks contain an array of days for that week. You can invoke this in four ways:
+Returns an array of each weeks for the month of the given date, each array of weeks contain an array of days for that week. You can invoke this in three ways:
 
   * `getWeeksInMonth()` - Returns an array for the weeks in the month of the [`#date`](#date) state with the days starting at the value of [`#startWeekAt`](#startweekat) prop
 
   * `getWeeksInMonth(date)` - Returns an array for the weeks in the month of the given `date` argument, with the days starting at the value of [`#startWeekAt`](#startweekat) prop
-
-  * `getWeeksInMonth(startingDayIndex)` - Returns an array for the weeks in the month of the [`#date`](#date) state, with the days starting at the value of the given `startingDayIndex` argument
 
   * `getWeeksInMonth(date, startingDayIndex)` - Returns an array for the weeks in the given `date` argument, with the days starting at the value of the `startingDayIndex` argument
 
@@ -485,7 +483,7 @@ Returns an array of each weeks for the month of the given date, each array of we
 
 ```js
 function MyCalendar(kalendaryo) {
-  const prevMonth = kalendaryo.getDateNextMonth()
+  const prevMonth = kalendaryo.getDatePrevMonth()
   const weeksPrevMonth = kalendaryo.getWeeksInMonth(prevMonth, 1)
 
   return (
