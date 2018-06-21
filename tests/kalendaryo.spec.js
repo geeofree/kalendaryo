@@ -11,8 +11,16 @@ beforeEach(() => {
 describe('<Kalendaryo />', () => {
   describe('Props', () => {
     describe('#startCurrentDateAt', () => {
-      test("is set to today's date with default format", () => {
+      test('is set to today\'s date by default', () => {
         expect(format(props.startCurrentDateAt, props.defaultFormat)).toEqual(
+          format(dateToday, props.defaultFormat)
+        )
+      })
+
+      test('is set to today\'s date if the given value is any type other than `Date`', () => {
+        const component = getComponentInstance({ startCurrentDateAt: false })
+        const {date} = component.state
+        expect(format(date, props.defaultFormat)).toEqual(
           format(dateToday, props.defaultFormat)
         )
       })
@@ -20,10 +28,25 @@ describe('<Kalendaryo />', () => {
       test('is as a Date object by default', () => {
         expect(props.startCurrentDateAt).toBeInstanceOf(Date)
       })
+    })
 
-      test('prints a console error for non-date type values', () => {
-        getComponentInstance({ startCurrentDateAt: false })
-        expect(console.warn).toThrow()
+    describe('#startSelectedDateAt', () => {
+      test('is set to today\'s date by default', () => {
+        expect(format(props.startSelectedDateAt, props.defaultFormat)).toEqual(
+          format(dateToday, props.defaultFormat)
+        )
+      })
+
+      test('is set to today\'s date if the given value is any type other than `Date`', () => {
+        const component = getComponentInstance({ startSelectedDateAt: false })
+        const {date} = component.state
+        expect(format(date, props.defaultFormat)).toEqual(
+          format(dateToday, props.defaultFormat)
+        )
+      })
+
+      test('is as a Date object by default', () => {
+        expect(props.startSelectedDateAt).toBeInstanceOf(Date)
       })
     })
 
@@ -297,7 +320,7 @@ describe('<Kalendaryo />', () => {
         expect(kalendaryo.getDaysInMonth()).toBeInstanceOf(Array)
       })
 
-      test("has an array length equal to the number of days of today's month when given no arguments", () => {
+      test('has an array length equal to the number of days of today\'s month when given no arguments', () => {
         const totalDaysThisMonth = getDaysInMonth(dateToday)
         expect(kalendaryo.getDaysInMonth()).toHaveLength(totalDaysThisMonth)
       })
@@ -314,9 +337,10 @@ describe('<Kalendaryo />', () => {
     })
 
     describe('#getWeeksInMonth', () => {
-      test('throws an error when the first argument given is neither a `Date` or an `Integer`', () => {
+      test('throws an error when the first argument given is not a `Date`', () => {
         expect(() => kalendaryo.getWeeksInMonth(false)).toThrow()
         expect(() => kalendaryo.getWeeksInMonth('string')).toThrow()
+        expect(() => kalendaryo.getWeeksInMonth(1)).toThrow()
       })
 
       test('throws an error when the second argument given is not an `Integer`', () => {

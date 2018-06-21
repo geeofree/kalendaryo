@@ -31,6 +31,7 @@ See the [Basic Usage](#basic-usage) section to see how you can build a basic cal
     * [#selectedDate](#selecteddate)
   * [Props](#props)
     * [#startCurrentDateAt](#startcurrentdateat)
+    * [#startSelectedDateAt](#startselecteddateat)
     * [#defaultFormat](#defaultformat)
     * [#startWeekAt](#startweekat)
     * [#onChange](#onchange)
@@ -163,7 +164,7 @@ Is the state for the *current date* the component is in. By convention, you shou
 #### #selectedDate
 <pre><b>type:</b> Date</pre>
 
-Is the state for the *selected date* on the component. By convention, you should only change this when the calendar you're building receives a date selection input from the user, *i.e.* selecting a day on the calendar. Defaults to today's date if [startCurrentDateAt](#startcurrentdateat) prop is not set.
+Is the state for the *selected date* on the component. By convention, you should only change this when the calendar you're building receives a date selection input from the user, *i.e.* selecting a day on the calendar. Defaults to today's date if [startSelectedDateAt](#startselecteddateat) prop is not set.
 
 ### Props
 #### #startCurrentDateAt
@@ -173,12 +174,31 @@ Is the state for the *selected date* on the component. By convention, you should
 <b>default:</b> new Date()
 </pre>
 
-Modifies the initial value of [`#date`](#date) & [`#selectedDate`](#selecteddate) states. Great for when you want your calendar to boot up in some date other than today.
+Modifies the initial value of [`#date`](#date). Great for when you want your calendar to boot up in some date other than today.
+
+Passing non-`Date` types to this prop sets the [`#date`](#date) state to today.
 
 ```js
 const birthday = new Date(1988, 4, 27)
 
 <Kalendaryo startCurrentDateAt={birthday} />
+```
+
+#### #startSelectedDateAt
+<pre>
+<b>type:</b> Date
+<b>required:</b> false
+<b>default:</b> new Date()
+</pre>
+
+Modifies the initial value of [`#selectedDate`](#selecteddate). Great for when you want your calendar's selected date to boot up in some other date than today.
+
+Passing non-`Date` types to this prop sets the [`#selectedDate`](#selecteddate) state to today.
+
+```js
+const birthday = new Date(1988, 4, 27)
+
+<Kalendaryo startSelectedDateAt={birthday} />
 ```
 
 #### #defaultFormat
@@ -468,16 +488,14 @@ function MyCalendar(kalendaryo) {
 
 #### #getWeeksInMonth
 <pre>
-<b>type:</b> func(date?: Date | startingDayIndex?: Integer, startingDayIndex?: Integer): WeekArray: DayArray: { label: Integer, dateValue: Date }
+<b>type:</b> func(date?: Date, startingDayIndex?: Integer): WeekArray: DayArray: { label: Integer, dateValue: Date }
 </pre>
 
-Returns an array of each weeks for the month of the given date, each array of weeks contain an array of days for that week. You can invoke this in four ways:
+Returns an array of each weeks for the month of the given date, each array of weeks contain an array of days for that week. You can invoke this in three ways:
 
   * `getWeeksInMonth()` - Returns an array for the weeks in the month of the [`#date`](#date) state with the days starting at the value of [`#startWeekAt`](#startweekat) prop
 
   * `getWeeksInMonth(date)` - Returns an array for the weeks in the month of the given `date` argument, with the days starting at the value of [`#startWeekAt`](#startweekat) prop
-
-  * `getWeeksInMonth(startingDayIndex)` - Returns an array for the weeks in the month of the [`#date`](#date) state, with the days starting at the value of the given `startingDayIndex` argument
 
   * `getWeeksInMonth(date, startingDayIndex)` - Returns an array for the weeks in the given `date` argument, with the days starting at the value of the `startingDayIndex` argument
 
@@ -485,7 +503,7 @@ Returns an array of each weeks for the month of the given date, each array of we
 
 ```js
 function MyCalendar(kalendaryo) {
-  const prevMonth = kalendaryo.getDateNextMonth()
+  const prevMonth = kalendaryo.getDatePrevMonth()
   const weeksPrevMonth = kalendaryo.getWeeksInMonth(prevMonth, 1)
 
   return (
