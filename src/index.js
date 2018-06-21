@@ -21,15 +21,21 @@ const dateToDayObjects = dateValue => ({
   label: getDate(dateValue)
 })
 
-class Kalendaryo extends Component {
-  state = {
-    date: this.props.startCurrentDateAt,
-    selectedDate: this.props.startCurrentDateAt
+const getState = props => {
+  const {startCurrentDateAt, startSelectedDateAt} = props
+  return {
+    date: isDate(startCurrentDateAt) ? startCurrentDateAt : new Date(),
+    selectedDate: isDate(startSelectedDateAt) ? startSelectedDateAt : new Date()
   }
+}
+
+class Kalendaryo extends Component {
+  state = getState(this.props)
 
   static defaultProps = {
     startWeekAt: 0,
     startCurrentDateAt: new Date(),
+    startSelectedDateAt: new Date(),
     defaultFormat: 'MM/DD/YY'
   }
 
@@ -40,8 +46,7 @@ class Kalendaryo extends Component {
     onSelectedChange: pt.func,
     startWeekAt: pt.number,
     defaultFormat: pt.string,
-    startCurrentDateAt: props =>
-      !isDate(props.startCurrentDateAt) ? new Error('Value is not an instance of Date') : null
+    startCurrentDateAt: pt.any
   }
 
   getFormattedDate = (arg = this.state.date, dateFormat) => {

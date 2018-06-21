@@ -31,6 +31,7 @@ See the [Basic Usage](#basic-usage) section to see how you can build a basic cal
     * [#selectedDate](#selecteddate)
   * [Props](#props)
     * [#startCurrentDateAt](#startcurrentdateat)
+    * [#startSelectedDateAt](#startselecteddateat)
     * [#defaultFormat](#defaultformat)
     * [#startWeekAt](#startweekat)
     * [#onChange](#onchange)
@@ -163,7 +164,7 @@ Is the state for the *current date* the component is in. By convention, you shou
 #### #selectedDate
 <pre><b>type:</b> Date</pre>
 
-Is the state for the *selected date* on the component. By convention, you should only change this when the calendar you're building receives a date selection input from the user, *i.e.* selecting a day on the calendar. Defaults to today's date if [startCurrentDateAt](#startcurrentdateat) prop is not set.
+Is the state for the *selected date* on the component. By convention, you should only change this when the calendar you're building receives a date selection input from the user, *i.e.* selecting a day on the calendar. Defaults to today's date if [startSelectedDateAt](#startselecteddateat) prop is not set.
 
 ### Props
 #### #startCurrentDateAt
@@ -173,12 +174,31 @@ Is the state for the *selected date* on the component. By convention, you should
 <b>default:</b> new Date()
 </pre>
 
-Modifies the initial value of [`#date`](#date) & [`#selectedDate`](#selecteddate) states. Great for when you want your calendar to boot up in some date other than today.
+Modifies the initial value of [`#date`](#date). Great for when you want your calendar to boot up in some date other than today.
+
+Passing non-`Date` types to this prop sets the [`#date`](#date) state to today.
 
 ```js
 const birthday = new Date(1988, 4, 27)
 
 <Kalendaryo startCurrentDateAt={birthday} />
+```
+
+#### #startSelectedDateAt
+<pre>
+<b>type:</b> Date
+<b>required:</b> false
+<b>default:</b> new Date()
+</pre>
+
+Modifies the initial value of [`#selectedDate`](#selecteddate). Great for when you want your calendar's selected date to boot up in some other date than today.
+
+Passing non-`Date` types to this prop sets the [`#selectedDate`](#selecteddate) state to today.
+
+```js
+const birthday = new Date(1988, 4, 27)
+
+<Kalendaryo startSelectedDateAt={birthday} />
 ```
 
 #### #defaultFormat
