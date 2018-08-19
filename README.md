@@ -14,11 +14,9 @@ You want a date component that's: <br />
   :heavy_check_mark: Flexible for your use case <br />
 
 ## This solution
-**Kalendaryo** is a React component that provides the toolsets for you to build calendar components that works for your use cases. It has no layout or functionalities other than the ones you can think of to build through its API.
+**Kalendaryo** is an unopinionated React component for building calendars. It has no opinions about what your calendar component should look or function like but rather only helps you deal with those unique constraints by providing various variables your calendar component needs such as the calendar's state data and methods for getting(*i.e. all the days in a month*) and setting(*i.e. selecting the date from a day*) plus many more!
 <br /> <br />
-The component uses the [render props](https://reactjs.org/docs/render-props.html) pattern which helps in exposing various variables for you to use and also gives you the flexibility to build your calendar's layout anyway you want due to its inline rendering nature.
-<br /> <br />
-See the [Basic Usage](#basic-usage) section to see how you can build a basic calendar component using Kalendaryo or see the [Examples](#examples) section to see more examples built with Kalendaryo.
+See the [Basic Usage](#basic-usage) section to see how you can build a basic calendar component with **Kalendaryo**, or see the [Examples](#examples) section to see more examples built with Kalendaryo.
 
 <hr />
 
