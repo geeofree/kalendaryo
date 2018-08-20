@@ -1,7 +1,7 @@
 {
   "name": "kalendaryo",
   "version": "0.0.0-development",
-  "description": "Build flexible react date components",
+  "description": "Unopinionated React Calendar Component",
   "main": "lib/index.js",
   "scripts": {
     "test": "jest",
@@ -19,9 +19,15 @@
     "url": "https://github.com/geeofree/kalendaryo.git"
   },
   "keywords": [
-    "react-date",
-    "react-date-component",
-    "react-kalendaryo"
+    "react",
+    "calendar",
+    "react calendar",
+    "react date",
+    "react date component",
+    "kalendaryo",
+    "react-kalendaryo",
+    "unopinionated react date component",
+    "react calendar component"
   ],
   "author": "Geoffrey P. Galagaran <geo.galagaran@gmail.com>",
   "license": "MIT",
@@ -30,9 +36,11 @@
   },
   "homepage": "https://github.com/geeofree/kalendaryo#readme",
   "peerDependencies": {
-    "date-fns": "1.x",
-    "prop-types": ">=15",
     "react": ">=0.14.x"
+  },
+  "dependencies": {
+    "prop-types": ">=15",
+    "date-fns": "1.x"
   },
   "devDependencies": {
     "babel-cli": "6.26.0",
@@ -44,7 +52,6 @@
     "babel-preset-stage-1": "6.24.1",
     "commitizen": "2.9.6",
     "cz-conventional-changelog": "2.1.0",
-    "date-fns": "1.29.0",
     "enzyme": "3.3.0",
     "enzyme-adapter-react-16": "1.1.1",
     "eslint": "4.19.1",
@@ -57,7 +64,6 @@
     "eslint-plugin-standard": "3.1.0",
     "jest": "22.4.3",
     "prettier": "1.12.1",
-    "prop-types": "15.6.1",
     "react": "16.3.2",
     "react-dom": "16.3.2",
     "semantic-release": "^15.4.1",
