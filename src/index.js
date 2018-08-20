@@ -285,7 +285,7 @@ class Kalendaryo extends Component {
    * @returns {string[]} - An array of each day on a week
    */
   getDayLabelsInWeek = (dayLabelFormat = 'ddd') => {
-    const weekOptions = { weekStartsOn: this.props.startingDayIndex }
+    const weekOptions = { weekStartsOn: this.props.startWeekAt }
     const firstDayOfMonth = startOfMonth(this.state.date)
     const firstDayOfFirstWeek = startOfWeek(firstDayOfMonth, weekOptions)
     const lastDayOfFirstWeek = endOfWeek(firstDayOfMonth, weekOptions)

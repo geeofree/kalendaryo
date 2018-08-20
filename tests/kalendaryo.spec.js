@@ -402,6 +402,8 @@ describe('<Kalendaryo />', () => {
           component.getDayLabelsInWeek().forEach((l, i) => {
             expect(l).toBe(dayLabels[i])
           })
+          const firstItem = dayLabels.shift()
+          dayLabels = dayLabels.concat(firstItem)
           startingDayIndex += 1
           component = getInstance(startingDayIndex)
         }
