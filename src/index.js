@@ -94,7 +94,7 @@ class Kalendaryo extends Component {
 
     /**
      * @prop {number[0..6]} startWeekAt
-     * @description - Modifies the starting day week of the month for the `getWeeksInMonth` method
+     * @description - Modifies the starting day of the weeks  on the `getWeeksInMonth` & `getDayLabelsInWeek` methods
      * @note - The values must be in the range of Sunday(0) to Saturday(6)
      * @default [0]
      */
