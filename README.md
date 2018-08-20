@@ -1,4 +1,4 @@
-# kalendaryo
+# Kalendaryo
 [![Coverage Status][coveralls-badge]][coveralls]
 [![Build Status][travis-badge]][travis]
 [![npm][npm-badge]][npm]
@@ -43,9 +43,12 @@ See the [Basic Usage](#basic-usage) section to see how you can build a basic cal
     * [#getDatePrevMonth](#getdateprevmonth)
     * [#getDaysInMonth](#getdaysinmonth)
     * [#getWeeksInMonth](#getweeksinmonth)
+    * [#getDayLabelsInWeek](#getdaylabelsinweek)
     * [#setDate](#setdate)
     * [#setSelectedDate](#setselecteddate)
     * [#pickDate](#pickdate)
+    * [#setDateNextMonth](#setdatenextmonth)
+    * [#setDatePrevMonth](#setdateprevmonth)
 * [Examples](#examples)
 * [Inspiration](#inspiration)
 
@@ -70,17 +73,15 @@ function MyCalendar(kalendaryo) {
   const {
     getFormattedDate,
     getWeeksInMonth,
-    getDatePrevMonth,
-    getDateNextMonth,
-    setSelectedDate,
-    setDate
+    getDayLabelsInWeek,
+    setDatePrevMonth,
+    setDateNextMonth,
+    setSelectedDate
   } = kalendaryo
 
   const currentDate = getFormattedDate("MMMM YYYY")
   const weeksInCurrentMonth = getWeeksInMonth()
-
-  const setDateNextMonth = () => setDate(getDateNextMonth())
-  const setDatePrevMonth = () => setDate(getDatePrevMonth())
+  const dayLabels = getDayLabelsInWeek()
   const selectDay = date => () => setSelectedDate(date)
 
   /* For this basic example we're going to build a calendar that has:
@@ -110,13 +111,9 @@ function MyCalendar(kalendaryo) {
       <div className="my-calendar-body">
         // (2.1)
         <div className="week day-labels">
-          <div className="day">Sun</div>
-          <div className="day">Mon</div>
-          <div className="day">Tue</div>
-          <div className="day">Wed</div>
-          <div className="day">Thu</div>
-          <div className="day">Fri</div>
-          <div className="day">Sat</div>
+          {dayLabels.map(label => (
+            <div key={label} className="day">{label}</div>
+          ))}
         </div>
 
         // (2.2)
@@ -227,7 +224,7 @@ const myFormat = 'yyyy-mm-dd'
 <b>default:</b> 0
 </pre>
 
-Modifies the starting day index of the weeks returned from [`#getWeeksInMonth`](#getweeksinmonth). Defaults to `0 (sunday)`
+Modifies the starting day index of the weeks returned from [`#getWeeksInMonth`](#getweeksinmonth) & [`#getDayLabelsInWeek`](#getdaylabelsinweek). Defaults to `0 (sunday)`
 
 ```jsx
 const monday = 1
@@ -522,6 +519,20 @@ function MyCalendar(kalendaryo) {
 ```
 <br />
 
+#### #getDayLabelsInWeek
+<pre>
+<b>type:</b> func(dayLabelFormat?: String): String[]
+</pre>
+
+Returns an array of strings for each day on a week
+
+  * `getDayLabelsInWeek()` - Returns an array of each day on a week formatted as `'ddd'` and starts on
+  the week index based on the value set on the [`#startWeekAt`](#startweekat) prop
+
+  * `getDayLabelsInWeek(dayLabelFormat)` - Returns an array of each day on a week formatted as the given
+  *dayLabelFormat argument* and starts on the week index based on the value set on the [`#startWeekAt`](#startweekat) prop
+<br />
+
 #### #setDate
 <pre>
 <b>type:</b> func(date: Date): void
@@ -601,6 +612,46 @@ function MyCalendar(kalendaryo) {
 }
 
 <Kalendaryo render={MyCalendar} />
+```
+<br />
+
+#### #setDateNextMonth
+<pre>
+<b>type:</b> func(): void
+</pre>
+
+Updates the [`#date`](#date) state by adding 1 month
+
+```jsx
+function MyCalendar(kalendaryo) {
+  const formattedDate = kalendaryo.getFormattedDate()
+  return (
+    <div>
+      <p>The date today is {formattedDate}</p>
+      <button onClick={kalendaryo.setDateNextMonth}>Click to set date to the next month</button>
+    </div>
+  )
+}
+```
+<br />
+
+#### #setDatePrevMonth
+<pre>
+<b>type:</b> func(): void
+</pre>
+
+Updates the [`#date`](#date) state by subtracting 1 month
+
+```jsx
+function MyCalendar(kalendaryo) {
+  const formattedDate = kalendaryo.getFormattedDate()
+  return (
+    <div>
+      <p>The date today is {formattedDate}</p>
+      <button onClick={kalendaryo.setDatePrevMonth}>Click to set date to the previous month</button>
+    </div>
+  )
+}
 ```
 
 ## Examples

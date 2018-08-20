@@ -94,7 +94,7 @@ class Kalendaryo extends Component {
 
     /**
      * @prop {number[0..6]} startWeekAt
-     * @description - Modifies the starting day week of the month for the `getWeeksInMonth` method
+     * @description - Modifies the starting day of the weeks  on the `getWeeksInMonth` & `getDayLabelsInWeek` methods
      * @note - The values must be in the range of Sunday(0) to Saturday(6)
      * @default [0]
      */
@@ -279,6 +279,21 @@ class Kalendaryo extends Component {
   }
 
   /**
+   * Gets the labels of the days on a week
+   * @name getDayLabelsInWeek
+   * @param {string} [dayLabelFormat='ddd'] - Format of the day labels
+   * @returns {string[]} - An array of each day on a week
+   */
+  getDayLabelsInWeek = (dayLabelFormat = 'ddd') => {
+    const weekOptions = { weekStartsOn: this.props.startingDayIndex }
+    const firstDayOfMonth = startOfMonth(this.state.date)
+    const firstDayOfFirstWeek = startOfWeek(firstDayOfMonth, weekOptions)
+    const lastDayOfFirstWeek = endOfWeek(firstDayOfMonth, weekOptions)
+
+    return eachDay(firstDayOfFirstWeek, lastDayOfFirstWeek).map(d => format(d, dayLabelFormat))
+  }
+
+  /**
    * Updates the `date` state to a given {Date}
    * @name setDate
    * @param {Date} date - The new date value of the `date` state
@@ -314,6 +329,24 @@ class Kalendaryo extends Component {
     this.setState({ date, selectedDate: date })
   }
 
+  /**
+   * Updates the `date` state by 1 month more
+   * @name setDateNextMonth
+   * @returns {void}
+   */
+  setDateNextMonth = () => {
+    this.setDate(this.getDateNextMonth())
+  }
+
+  /**
+   * Updates the `date` state by 1 month less
+   * @name setDatePrevMonth
+   * @returns {void}
+   */
+  setDatePrevMonth = () => {
+    this.setDate(this.getDatePrevMonth())
+  }
+
   componentDidUpdate (_, prevState) {
     const { onChange, onDateChange, onSelectedChange } = this.props
 
@@ -340,9 +373,12 @@ class Kalendaryo extends Component {
     getDatePrevMonth: this.getDatePrevMonth,
     getDaysInMonth: this.getDaysInMonth,
     getWeeksInMonth: this.getWeeksInMonth,
+    getDayLabelsInWeek: this.getDayLabelsInWeek,
     setDate: this.setDate,
     setSelectedDate: this.setSelectedDate,
-    pickDate: this.pickDate
+    pickDate: this.pickDate,
+    setDateNextMonth: this.setDateNextMonth,
+    setDatePrevMonth: this.setDatePrevMonth
   })
 
   getUnknownProps = () => {
