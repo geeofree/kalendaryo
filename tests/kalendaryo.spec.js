@@ -391,6 +391,23 @@ describe('<Kalendaryo />', () => {
       })
     })
 
+    describe('#getDayLabelsInWeek', () => {
+      test('it returns the correct day labels on a week', () => {
+        const getInstance = (startWeekAt) => getComponentInstance({ startWeekAt })
+        let component = kalendaryo
+        let dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+        let startingDayIndex = 0
+        while (startingDayIndex < 7) {
+          component.getDayLabelsInWeek().forEach((l, i) => {
+            expect(l).toBe(dayLabels[i])
+          })
+          startingDayIndex += 1
+          component = getInstance(startingDayIndex)
+        }
+      })
+    })
+
     describe('#setDate', () => {
       test('it throws an error on invalid date values given the argument: (notADateObject)', () => {
         expect(() => kalendaryo.setDate(false)).toThrow()
@@ -446,6 +463,22 @@ describe('<Kalendaryo />', () => {
 
         expect(dateAfter).not.toBe(dateNow)
         expect(selectedDateAfter).not.toBe(selectedDateNow)
+      })
+    })
+
+    describe('#setDateNextMonth', () => {
+      test('it correctly updates the `date` state by 1 month more', () => {
+        const getDateNextMonth = () => addMonths(dateToday, 1)
+        kalendaryo.setDateNextMonth()
+        expect(kalendaryo.getFormattedDate()).toBe(kalendaryo.getFormattedDate(getDateNextMonth()))
+      })
+    })
+
+    describe('#setDatePrevMonth', () => {
+      test('it correctly updates the `date` state by 1 month less', () => {
+        const getDatePrevMonth = () => subMonths(dateToday, 1)
+        kalendaryo.setDatePrevMonth()
+        expect(kalendaryo.getFormattedDate()).toBe(kalendaryo.getFormattedDate(getDatePrevMonth()))
       })
     })
   })
