@@ -1,4 +1,4 @@
-import { Component } from 'react'
+import {Component} from 'react'
 import pt from 'prop-types'
 import {
   format,
@@ -16,39 +16,156 @@ import {
   isSameMonth
 } from 'date-fns'
 
-const dateToDayObjects = dateValue => ({
-  dateValue,
-  label: getDate(dateValue)
-})
+/**
+ * @typedef {Object} DayObject - Represents the metadata of a "day"
+ * @property {Date} dateValue - The value of a day's date
+ * @property {number} label - The day's numerical label
+ */
 
-const getState = props => {
-  const {startCurrentDateAt, startSelectedDateAt} = props
+/**
+ * Factory function for creating a {DayObject}
+ * @param {Date} dateValue
+ * @returns {DayObject}
+ */
+function createDayObject (dateValue) {
   return {
-    date: isDate(startCurrentDateAt) ? startCurrentDateAt : new Date(),
-    selectedDate: isDate(startSelectedDateAt) ? startSelectedDateAt : new Date()
+    dateValue,
+    label: getDate(dateValue)
   }
 }
 
-class Kalendaryo extends Component {
-  state = getState(this.props)
+/**
+ * Throws an {Error} with a helpful link for misproperly used methods
+ * @param {string} methodName - The name of the method that is being misproperly used
+ * @throws {Error} Exception for misproperly used methods with a link for their proper use
+ */
+function misusageThrow (methodName) {
+  throw new Error(
+    'Invalid usage of #' + methodName + '. ' +
+    'Please see https://github.com/geeofree/kalendaryo/#' + methodName.toLowerCase() + ' ' +
+    'to see the proper usage of this method.'
+  )
+}
 
-  static defaultProps = {
-    startWeekAt: 0,
-    startCurrentDateAt: new Date(),
-    startSelectedDateAt: new Date(),
-    defaultFormat: 'MM/DD/YY'
+class Kalendaryo extends Component {
+  /**
+   * @typedef {Object} State - The interal data that can change on this component
+   */
+  state = {
+    /**
+     * @state {Date} date
+     * @description - State for the current date. Users should only modify this when their calendar
+     * moves to and from a date i.e. changing the month or year of their calendar.
+     * @default [new Date()]
+     */
+    date: isDate(this.props.startCurrentDateAt) ? this.props.startCurrentDateAt : new Date(),
+
+    /**
+     * @state {Date} selectedDate
+     * @description - State for the selected date. Users should only modify this when their calendar
+     * receives a user input such as click events for selecting a day on a calendar
+     * @default [new Date()]
+     */
+    selectedDate: isDate(this.props.startSelectedDateAt) ? this.props.startSelectedDateAt : new Date()
   }
 
   static propTypes = {
-    render: pt.func.isRequired,
-    onChange: pt.func,
-    onDateChange: pt.func,
-    onSelectedChange: pt.func,
-    startWeekAt: pt.number,
+    /**
+     * @prop {string} defaultFormat
+     * @description - Modifies the `getFormattedDate` method's date string format
+     * @default ['MM/DD/YY']
+     * @see {@link https://date-fns.org/docs/format} for all the possible string formats
+     */
     defaultFormat: pt.string,
-    startCurrentDateAt: pt.any
+
+    /**
+     * @prop {(Date|any)} startCurrentDateAt
+     * @description - Modifies the initial state value of `date`
+     * @note - If the given value is not a {Date}, the `date` state will default to today's date
+     */
+    startCurrentDateAt: pt.any,
+
+    /**
+     * @prop {(Date|any)} startSelectedDateAt
+     * @description - Modifies the initial state value of `selectedDate`
+     * @note - If the given value is not a {Date}, the `selectedDate` state will default to today's date
+     */
+    startSelectedDateAt: pt.any,
+
+    /**
+     * @prop {number[0..6]} startWeekAt
+     * @description - Modifies the starting day week of the month for the `getWeeksInMonth` method
+     * @note - The values must be in the range of Sunday(0) to Saturday(6)
+     * @default [0]
+     */
+    startWeekAt: pt.number,
+
+    /**
+     * @callback onChangeCallback
+     * @prop {func} onChange
+     * @param {State} state
+     * @description - Callback Prop for listening to changes on the component's `state`
+     * @returns {void}
+     */
+    onChange: pt.func,
+
+    /**
+     * @callback onDateChangeCallback
+     * @prop {func} onDateChange
+     * @param {Date} date
+     * @description - Callback Prop for listening to changes only to the component's `date` state
+     * @returns {void}
+     */
+    onDateChange: pt.func,
+
+    /**
+     * @callback onSelectedChangeCallback
+     * @prop {func} onSelectedChange
+     * @param {Date} selectedDate
+     * @description - Callback Prop for listening to changes only to the component's `selectedDate` state
+     * @returns {void}
+     */
+    onSelectedChange: pt.func,
+
+    /**
+     * @required
+     * @callback renderPropCallback
+     * @prop {func} render
+     * @param {Date} date
+     * @param {Date} selectedDate
+     * @param {func} getFormattedDate
+     * @param {func} getDateNextMonth
+     * @param {func} getDatePrevMonth
+     * @param {func} getDaysInMonth
+     * @param {func} getWeeksInMonth
+     * @param {func} setDate
+     * @param {func} setSelectedDate
+     * @param {func} pickDate
+     * @param {any} [...unknownProps]
+     * @description - Callback prop responsible for rendering the calendar's layout and functionality.
+     * Receives both the `date` and `selectedDate` states, all of the component's methods, as well
+     * as any unknown props given to the component
+     * @returns {?ReactElement}
+     */
+    render: pt.func.isRequired
   }
 
+  static defaultProps = {
+    startWeekAt: 0,
+    defaultFormat: 'MM/DD/YY',
+    startCurrentDateAt: new Date(),
+    startSelectedDateAt: new Date()
+  }
+
+  /**
+   * Formats a given {Date} base on the {string} format
+   * @name getFormattedDate
+   * @param {(Date|string)} [arg=this.state.date] - The date to format or a string for formatting
+   * @param {string} [dateFormat] - String for formatting
+   * @returns {string} - Formatted date string
+   * @throws {Error} Exception when argument types are invalid
+   * @see {@link https://date-fns.org/docs/format} for all the possible {String} formats
+   */
   getFormattedDate = (arg = this.state.date, dateFormat) => {
     if (isDate(arg) && dateFormat === undefined) {
       return format(arg, this.props.defaultFormat)
@@ -62,9 +179,17 @@ class Kalendaryo extends Component {
       return format(arg, dateFormat)
     }
 
-    throw new Error('Invalid arguments passed')
+    misusageThrow('getFormattedDate')
   }
 
+  /**
+   * Gets the {Date} of the month added by the given {number} amount of months
+   * @name getDateNextMonth
+   * @param {(Date|number)} [arg=this.state.date] - Date to be added or the amount of months to add
+   * @param {number} amount - Amount of months to add on a date
+   * @returns {Date} - A new date with the added months
+   * @throws {Error} Exception when argument types are invalid
+   */
   getDateNextMonth = (arg = this.state.date, amount) => {
     if (isDate(arg) && amount === undefined) {
       return addMonths(arg, 1)
@@ -78,9 +203,17 @@ class Kalendaryo extends Component {
       return addMonths(arg, amount)
     }
 
-    throw new Error('Invalid arguments passed')
+    misusageThrow('getDateNextMonth')
   }
 
+  /**
+   * Gets the {Date} of the month subtracted by the given {number} amount of months
+   * @name getDatePrevMonth
+   * @param {(Date|number)} [arg=this.state.date] - Date to be subtracted or the amount of months to subtract
+   * @param {number} amount - Amount of months to subtract on a date
+   * @returns {Date} - A new date with the subtracted months
+   * @throws {Error} Exception when argument types are invalid
+   */
   getDatePrevMonth = (arg = this.state.date, amount) => {
     if (isDate(arg) && amount === undefined) {
       return subMonths(arg, 1)
@@ -94,30 +227,41 @@ class Kalendaryo extends Component {
       return subMonths(arg, amount)
     }
 
-    throw new Error('Invalid arguments passed')
+    misusageThrow('getDatePrevMonth')
   }
 
+  /**
+   * Gets the days in a given month of a {Date}
+   * @name getDaysInMonth
+   * @param {Date} [date=this.state.date] - Date of the desired days in the month
+   * @returns {DayObject[]} - The days in the month of the given date
+   * @throws {Error} Exception when the `date` argument is not a {Date}
+   */
   getDaysInMonth = (date = this.state.date) => {
     if (!isDate(date)) throw new Error('Value is not an instance of Date')
-    return eachDay(startOfMonth(date), endOfMonth(date)).map(dateToDayObjects)
+    return eachDay(startOfMonth(date), endOfMonth(date)).map(createDayObject)
   }
 
-  getWeeksInMonth = (date = this.state.date, weekStartsOn = this.props.startWeekAt) => {
-    if (!isDate(date)) {
-      throw new Error(`First argument must be a date`)
+  /**
+   * Gets the weeks in a given month of a {Date}
+   * @name getWeeksInMonth
+   * @param {Date} [date=this.state.date] - Date of the desired weeks in the month
+   * @param {number[0..6]} [startingDayIndex=this.props.startWeekAt] - Starting day of the weeks
+   * @returns {Week[DayObject[]]} - The weeks with their respective days of the given month in the date
+   * @throws {Error} Exception when argument types are invalid
+   */
+  getWeeksInMonth = (date = this.state.date, startingDayIndex = this.props.startWeekAt) => {
+    if (!isDate(date) || !Number.isInteger(startingDayIndex)) {
+      misusageThrow('getWeeksInMonth')
     }
 
-    if (!Number.isInteger(weekStartsOn)) {
-      throw new Error('Second argument must be an integer')
-    }
-
-    const weekOptions = { weekStartsOn }
+    const weekOptions = { weekStartsOn: startingDayIndex }
     const firstDayOfMonth = startOfMonth(date)
     const firstDayOfFirstWeek = startOfWeek(firstDayOfMonth, weekOptions)
     const lastDayOfFirstWeek = endOfWeek(firstDayOfMonth, weekOptions)
 
     const getWeeks = (startDay, endDay, weekArray = []) => {
-      const week = eachDay(startDay, endDay).map(dateToDayObjects)
+      const week = eachDay(startDay, endDay).map(createDayObject)
       const weeks = [...weekArray, week]
       const nextWeek = addWeeks(startDay, 1)
 
@@ -134,16 +278,37 @@ class Kalendaryo extends Component {
     return getWeeks(firstDayOfFirstWeek, lastDayOfFirstWeek)
   }
 
+  /**
+   * Updates the `date` state to a given {Date}
+   * @name setDate
+   * @param {Date} date - The new date value of the `date` state
+   * @returns {void}
+   * @throws {Error} Exception when the `date` argument is not a {Date}
+   */
   setDate = date => {
     if (!isDate(date)) throw new Error('Value is not an instance of Date')
     this.setState({ date })
   }
 
+  /**
+   * Updates the `selectedDate` state to a given {Date}
+   * @name setSelectedDate
+   * @param {Date} selectedDate - The new date value of the `selectedDate` state
+   * @returns {void}
+   * @throws {Error} Exception when the `selectedDate` argument is not a {Date}
+   */
   setSelectedDate = selectedDate => {
     if (!isDate(selectedDate)) throw new Error('Value is not an instance of Date')
     this.setState({ selectedDate })
   }
 
+  /**
+   * Updates both the `date` and `selectedDate` states to a given {Date}
+   * @name pickDate
+   * @param {Date} date - The new date value of the `date` and `selectedDate` states
+   * @returns {void}
+   * @throws {Error} Exception when the `date` argument is not a {Date}
+   */
   pickDate = date => {
     if (!isDate(date)) throw new Error('Value is not an instance of Date')
     this.setState({ date, selectedDate: date })
@@ -169,42 +334,40 @@ class Kalendaryo extends Component {
     }
   }
 
-  render () {
-    const {
-      state,
-      props,
-      getFormattedDate,
-      getDateNextMonth,
-      getDatePrevMonth,
-      getDaysInMonth,
-      getWeeksInMonth,
-      setDate,
-      setSelectedDate,
-      pickDate
-    } = this
+  getMethods = () => ({
+    getFormattedDate: this.getFormattedDate,
+    getDateNextMonth: this.getDateNextMonth,
+    getDatePrevMonth: this.getDatePrevMonth,
+    getDaysInMonth: this.getDaysInMonth,
+    getWeeksInMonth: this.getWeeksInMonth,
+    setDate: this.setDate,
+    setSelectedDate: this.setSelectedDate,
+    pickDate: this.pickDate
+  })
 
+  getUnknownProps = () => {
     const {
       startCurrentDateAt,
+      startSelectedDateAt,
       defaultFormat,
       onChange,
       onDateChange,
       onSelectedChange,
       render,
-      ...rest
-    } = props
+      ...unknownProps
+    } = this.props
 
-    return render({
-      ...rest,
-      ...state,
-      getFormattedDate,
-      getDateNextMonth,
-      getDatePrevMonth,
-      getDaysInMonth,
-      getWeeksInMonth,
-      setDate,
-      setSelectedDate,
-      pickDate
-    })
+    return unknownProps
+  }
+
+  getRenderArguments = () => ({
+    ...this.state,
+    ...this.getMethods(),
+    ...this.getUnknownProps()
+  })
+
+  render () {
+    return this.props.render(this.getRenderArguments())
   }
 }
 

@@ -50,19 +50,15 @@ See the [Basic Usage](#basic-usage) section to see how you can build a basic cal
 * [Inspiration](#inspiration)
 
 ## Installation
-This package expects you to have `>= react@0.14.x`, `>= prop-types@15`, and `date-fns@1.x`  
-
-Once you're done installing these peer dependencies, install the package like so:
+*This package expects you to have `>= react@0.14.x`*
 
 ```js
 npm i -d kalendaryo // <-- for npm peeps
 yarn add kalendaryo // <-- for yarn peeps
 ```
 
-After doing all of those, hopefully everything should work and be ready for use :thumbsup:
-
 ## Basic Usage
-```js
+```jsx
 // Step 1: Import the component
 import Kalendaryo from 'kalendaryo'
 
@@ -154,15 +150,22 @@ This section contains descriptions of the various things the `<Kalendaryo />` co
 
 ### State
 #### #date
-<pre><b>type:</b> Date</pre>
+<pre>
+<b>type:</b> Date
+<b>default:</b> new Date()
+</pre>
 
-Is the state for the *current date* the component is in. By convention, you should only change this when the calendar you're building changes it's current date, *i.e.* moving to and from a month or year on the calendar. Defaults to today's date if [startCurrentDateAt](#startcurrentdateat) prop is not set.
-<br />
+Is the state for the *current date* the component is in. By convention, this should only change when the calendar changes its current date, *i.e.* moving to and from a month or year on the calendar.
+<br /><br />
 
 #### #selectedDate
-<pre><b>type:</b> Date</pre>
+<pre>
+<b>type:</b> Date
+<b>default:</b> new Date()
+</pre>
 
-Is the state for the *selected date* on the component. By convention, you should only change this when the calendar you're building receives a date selection input from the user, *i.e.* selecting a day on the calendar. Defaults to today's date if [startSelectedDateAt](#startselecteddateat) prop is not set.
+Is the state for the *selected date* on the component. By convention, this should only change when the calendar receives a date selection input from the user, *i.e.* selecting a day on the calendar.
+<br/></br>
 
 ### Props
 #### #startCurrentDateAt
@@ -174,13 +177,14 @@ Is the state for the *selected date* on the component. By convention, you should
 
 Modifies the initial value of [`#date`](#date). Great for when you want your calendar to boot up in some date other than today.
 
-Passing non-`Date` types to this prop sets the [`#date`](#date) state to today.
+**Note:** Passing non-`Date` types to this prop sets the [`#date`](#date) state to today.
 
-```js
-const birthday = new Date(1988, 4, 27)
+```jsx
+const birthday = new Date(1995, 4, 27)
 
 <Kalendaryo startCurrentDateAt={birthday} />
 ```
+<br/>
 
 #### #startSelectedDateAt
 <pre>
@@ -189,15 +193,16 @@ const birthday = new Date(1988, 4, 27)
 <b>default:</b> new Date()
 </pre>
 
-Modifies the initial value of [`#selectedDate`](#selecteddate). Great for when you want your calendar's selected date to boot up in some other date than today.
+Modifies the initial value of [`#selectedDate`](#selecteddate). Great for when you want your calendar's selected date to boot up in another date than today.
 
-Passing non-`Date` types to this prop sets the [`#selectedDate`](#selecteddate) state to today.
+**Note:** Passing non-`Date` types to this prop sets the [`#selectedDate`](#selecteddate) state to today.
 
-```js
+```jsx
 const birthday = new Date(1988, 4, 27)
 
 <Kalendaryo startSelectedDateAt={birthday} />
 ```
+<br/>
 
 #### #defaultFormat
 <pre>
@@ -206,28 +211,30 @@ const birthday = new Date(1988, 4, 27)
 <b>default:</b> 'MM/DD/YY'
 </pre>
 
-Modifies the default format value on the [`#getFormattedDate`](#getformatteddate) method. Accepts any format that [date-fns' `format` function](https://date-fns.org/v1.29.0/docs/format) can support.
+Modifies the default format value on the [`#getFormattedDate`](#getformatteddate) method. Accepts any format that [date-fns' `format` function](https://date-fns.org/docs/format) can support.
 
-```js
+```jsx
 const myFormat = 'yyyy-mm-dd'
 
 <Kalendaryo defaultFormat={myFormat} />
 ```
+<br/>
 
 #### #startWeekAt
 <pre>
-<b>type:</b> Number
+<b>type:</b> Number[0..6]
 <b>required:</b> false
 <b>default:</b> 0
 </pre>
 
-Modifies the starting day index of the weeks returned from the [`#getWeeksInMonth`](#getweeksinmonth). Defaults to `0 (sunday)`
+Modifies the starting day index of the weeks returned from [`#getWeeksInMonth`](#getweeksinmonth). Defaults to `0 (sunday)`
 
-```js
+```jsx
 const monday = 1
 
 <Kalendaryo startWeekAt={monday} />
 ```
+<br/>
 
 #### #onChange
 <pre>
@@ -235,13 +242,14 @@ const monday = 1
 <b>required:</b> false
 </pre>
 
-Callback for listening to state changes on the [`#date`](#date) & [`#selectedDate`](#selecteddate) states.
+Callback prop for listening to state changes on the [`#date`](#date) & [`#selectedDate`](#selecteddate) states.
 
-```js
+```jsx
 const logState = (state) => console.log(state)
 
 <Kalendaryo onChange={logState}/>
 ```
+<br />
 
 #### #onDateChange
 <pre>
@@ -249,13 +257,14 @@ const logState = (state) => console.log(state)
 <b>required:</b> false
 </pre>
 
-Callback for listening to state changes only to the [`#date`](#date) state.
+Callback prop for listening to state changes only to the [`#date`](#date) state.
 
-```js
+```jsx
 const logDateState = (date) => console.log(date)
 
 <Kalendaryo onDateChange={logDateState} />
 ```
+<br />
 
 #### #onSelectedChange
 <pre>
@@ -263,23 +272,24 @@ const logDateState = (date) => console.log(date)
 <b>required:</b> false
 </pre>
 
-Callback for listening to state changes only to the [`#selectedDate`](#selecteddate) state.
+Callback prop for listening to state changes only to the [`#selectedDate`](#selecteddate) state.
 
-```js
+```jsx
 const logSelectedDateState = (selectedDate) => console.log(selectedDate)
 
 <Kalendaryo onSelectedChange={logSelectedDateState} />
 ```
+<br />
 
 #### #render
 <pre>
-<b>type:</b> func(kalendaryo: Object): void
+<b>type:</b> func(props: Object): void
 <b>required:</b> true
 </pre>
 
-Callback for rendering your date component. This function receives an object which has `<Kalendaryo />`'s [`state`](#state), [`methods`](#methods), as well as props you pass that are invalid(see [passing variables to the render prop](#passing-variables-to-the-render-prop) for more information).
+Callback prop responsible for rendering the date component. This function receives an object which has the [`state`](#state), [`methods`](#methods), as well as props you pass that are invalid(see [passing variables to the render prop](#passing-variables-to-the-render-prop) for more information).
 
-```js
+```jsx
 const MyCalendar = (kalendaryo) => {
   console.log(kalendaryo)
   return <p>Some layout</p>
@@ -287,18 +297,19 @@ const MyCalendar = (kalendaryo) => {
 
 <Kalendaryo render={MyCalendar} />
 ```
+<br />
 
 #### Passing variables to the render prop
-Sometimes you may need to have states other than the [`#date`](#date) and [`#selectedDate`](#selectedDate) state, i.e for a date range calendar component you may need to have a state for `startDate` and `endDate` and may need to create the calendar component as a method inside the date range calendar's class like so:
+Sometimes you may need to have states other than the [`#date`](#date) and [`#selectedDate`](#selectedDate) state, *i.e* for a date range calendar component, you may need to have a state for its `startDate` and `endDate` and may need to create the calendar component as a method inside the date range calendar's class like so:
 
-```js
+```jsx
 class DateRangeCalendar extends React.Component {
   state = {
     startDate: null,
     endDate: null
   }
 
-  Calendar = () => {
+  Calendar = (props) => {
     const { startDate, endDate } = this.state
     return // Your calendar layout
   }
@@ -313,11 +324,15 @@ class DateRangeCalendar extends React.Component {
 }
 ```
 
-This approach however, leaves the `Calendar` render callback tightly coupled to the `DateRangeCalendar` component and bloats it with an unnecessary method for rendering UI.
+This however, leaves the `Calendar` component tightly coupled to the `DateRangeCalendar` component and makes it a little bit harder for us to keep track of what's going on with what.
 
-An approach I decided to go for and highly suggest is to pass any variables you want to pass through the `Kalendaryo` component's prop, any invalid or unknown props that `Kalendaryo` isn't concerned about gets passed to the [`#render`](#render) callback's object parameter, this makes the `render` callback more pure and simple!
+*If only we could separate the `DateRangeCalendar`'s state logic and `Calendar`'s UI rendering*
 
-```js
+To solve this, the `Kalendaryo` component can receive **unknown props**. These are props that gets passed to the `render` prop callback when it does not convey any meaning to the `Kalendaryo` component.
+
+With **unknown props** we can pass any arbitrary variable to `Kalendaryo` as long as it does not know what to do with it *i.e.* the `startDate` and `endDate` states. We would then have no need to put the `Calendar` function inside of the `DateRangeCalendar` class since the states are now an injected dependency to the `Calendar` *e.g*
+
+```jsx
 class DateRangeCalendar extends React.Component {
   state = {
     startDate: null,
@@ -340,51 +355,32 @@ class DateRangeCalendar extends React.Component {
   }
 }
 
-// Pure and simple!
-function Calendar(kalendaryo) {
-  const { startDate, endDate } = kalendaryo
+function Calendar(props) {
+  const { startDate, endDate } = props
   return // Your calendar component
 }
 ```
 
-You can also use this functionality to add helper functions inside the `render` callback!
-
-```js
-import { differenceInDays, isWithinRange } from 'date-fns'
-
-const dateIsInRange = (date, startDate, endDate) => {
-  if (!isDate(data) || !isDate(startDate) || !isDate(endDate)) {
-    throw new Error('Argument is not an instance of Date')
-  }
-  return differenceInDays(startDate, endDate) < 1 && isWithinRange(date, startDate, endDate)
-}
-
-function MyCalendar(kalendaryo) {
-  const { dateIsInRange } = kalendaryo
-  return // Your calendar layout
-}
-
-<Kalendaryo dateIsInRange={dateIsInRange} render={MyCalendar} />
-```
+With this, the `Calendar` and `DateRangeCalendar` are now separated to the things they're solely responsible for.
+<br /><br />
 
 ### Methods
 #### #getFormattedDate
 <pre>
 <b>type:</b> func(date?: Date | format?: String, format?: String): String
+<b>throws:</b> Error exception when the types of the given argument are invalid
 </pre>
 
 Returns the date formatted by the given format string. You can invoke this in four ways:
-  * `getFormattedDate()` - When **no arguments** are given, by default `#getFormattedDate` returns the current value in the [`#date`](#date) state formatted as the value given in the [`#defaultFormat`](#defaultformat) prop
+  * `getFormattedDate()` - Returns the [`#date`](#date) state formatted as the value set on the [`#defaultFormat`](#defaultformat) prop
 
-  * `getFormattedDate(date)` - When a **date object** is given in the first argument and the second argument is not given, `#getFormattedDate` returns the given date object formatted as the value given in the [`#defaultFormat`](#defaultformat) prop
+  * `getFormattedDate(date)` - Returns the given *date argument* formatted as the value set on the [`#defaultFormat`](#defaultformat) prop
 
-  * `getFormattedDate(formatString)` - When a **string** is given in the first argument and the second argument is not given, `#getFormattedDate` returns the current value in the [`#date`](#date) state formatted as the value from the given string
+  * `getFormattedDate(format)` - Returns the [`#date`](#date) state formatted to the given *format string argument*
 
-  * `getFormattedDate(date, formatString)` - When the **second argument** is given, the first argument must be a date object, this will return the given date object formatted as the value from the given string value on the second argument
+  * `getFormattedDate(date, format)` - Returns the given *date argument* formatted to the given *format string argument*
 
-**NOTE:** Throws an error if an invalid argument value is passed to the function
-
-```js
+```jsx
 function MyCalendar(kalendaryo) {
   const birthday = new Date(1988, 4, 27)
   const myFormattedDate = kalendaryo.getFormattedDate(birthday, 'yyyy-mm-dd')
@@ -394,24 +390,24 @@ function MyCalendar(kalendaryo) {
 
 <Kalendaryo render={MyCalendar} />
 ```
+<br />
 
 #### #getDateNextMonth
 <pre>
-<b>type:</b> func(date?: Date | integer?: Integer, integer?: Integer): Date
+<b>type:</b> func(date?: Date | amount?: Number, amount?: Number): Date
+<b>throws:</b> Error exception when the types of the given argument are invalid
 </pre>
 
-Returns a date object with months added from some given integer. You can invoke this in four ways:
-  * `getDateNextMonth()` - When **no arguments** are given, by default `#getDateNextMonth` will add 1 month to the value of the [`#date`](#date) state
+Returns a date with months added from the given amount. You can invoke this in four ways:
+  * `getDateNextMonth()` - Returns the [`#date`](#date) state with *1 month* added to it
 
-  * `getDateNextMonth(date)` - When a **date object** is given in the first argument and the second argument is not given, `#getDateNextMonth` will add 1 month by default to the given date object
+  * `getDateNextMonth(date)` - Returns the given *date argument* with *1 month* added to it
 
-  * `getDateNextMonth(integer)` - When an **integer** is given in the first argument and the second argument is not given, `#getDateNextMonth` will add a month to the value of the [`#date`](#date) state by the specified integer value
+  * `getDateNextMonth(amount)` - Returns the [`#date`](#date) state with the months added to it from the given *amount argument*
 
-  * `getDateNextMonth(date, integer)` - When the **second argument** is given, the first value must be a date object, this will return the given date object from the first argument that has a month added from the specified integer value on the second argument
+  * `getDateNextMonth(date, amount)` - Returns the given *date argument* with the months added to it from the given *amount argument*
 
-**NOTE:** Throws an error if an invalid argument value is passed to the function
-
-```js
+```jsx
 function MyCalendar(kalendaryo) {
   const nextMonth = kalendaryo.getDateNextMonth()
   const nextMonthFormatted = kalendaryo.getFormattedDate(nextMonth, 'MMMM')
@@ -421,24 +417,24 @@ function MyCalendar(kalendaryo) {
 
 <Kalendaryo render={MyCalendar} />
 ```
+<br />
 
 #### #getDatePrevMonth
 <pre>
-<b>type:</b> func(date?: Date | integer?: Integer, integer?: Integer): Date
+<b>type:</b> func(date?: Date | amount?: Number, amount?: Number): Date
+<b>throws:</b> Error exception when the types of the given argument are invalid
 </pre>
 
-Returns a date object with months subtracted from some given integer. You can invoke this in four ways:
-  * `getDatePrevMonth()` - When **no arguments** are given, by default `#getDatePrevMonth` will subtract 1 month to the value of the [`#date`](#date) state
+Returns a date with months subtracted from the given amount. You can invoke this in four ways:
+  * `getDatePrevMonth()` - Returns the [`#date`](#date) state with *1 month* subtracted to it
 
-  * `getDatePrevMonth(date)` - When a **date object** is given in the first argument and the second argument is not given, `#getDatePrevMonth` will subtract 1 month by default to the given date object
+  * `getDatePrevMonth(date)` - Returns the given *date argument* with *1 month* subtracted to it
 
-  * `getDatePrevMonth(integer)` - When an **integer** is given in the first argument and the second argument is not given, `#getDatePrevMonth` will subtract a month to the value of the [`#date`](#date) state by the specified integer value
+  * `getDatePrevMonth(amount)` - Returns the [`#date`](#date) state with the months subtracted to it from the given *amount argument*
 
-  * `getDatePrevMonth(date, integer)` - When the **second argument** is given, the first value must be a date object, this will return the given date object from the first argument that has a month subtracted from the specified integer value on the second argument
+  * `getDatePrevMonth(date, amount)` - Returns the given *date argument* with the months subtracted to it from the given *amount argument*
 
-**NOTE:** Throws an error if an invalid argument value is passed to the function
-
-```js
+```jsx
 function MyCalendar(kalendaryo) {
   const prevMonth = kalendaryo.getDatePrevMonth()
   const prevMonthFormatted = kalendaryo.getFormattedDate(prevMonth, 'MMMM')
@@ -448,21 +444,21 @@ function MyCalendar(kalendaryo) {
 
 <Kalendaryo render={MyCalendar} />
 ```
+<br />
 
 #### #getDaysInMonth
 <pre>
-<b>type:</b> func(date?: Date): Array: { label: Integer, dateValue: Date }
+<b>type:</b> func(date?: Date): DayObject[]
+<b>throws:</b> Error exception when the types of the given argument are invalid
 </pre>
 
-Returns an array of *day* objects which are objects that have data for the `label` of the day as well as the `dateValue` for that day. You can invoke this in two ways:
+Returns an array of [Day Objects](#dayobject) for the month of a given date
 
-  * `getDaysInMonth()` - When **no argument** is given, by default `#getDaysInMonth` returns an array of day objects from the [`#date`](#date) state's value
+  * `getDaysInMonth()` - Returns all the days in the month of the [`#date`](#date) state
 
-  * `getDaysInMonth(date)` - When a **date object** is given, `#getDaysInMonth` returns an array of day objects for the given date
+  * `getDaysInMonth(date)` - Returns all the days in the month of the given *date argument*
 
-**NOTE:** Throws an error if an invalid argument value is passed to the function
-
-```js
+```jsx
 function MyCalendar(kalendaryo) {
   const nextMonth = kalendaryo.getDateNextMonth()
   const daysNextMonth = kalendaryo.getDaysInMonth(nextMonth)
@@ -483,23 +479,23 @@ function MyCalendar(kalendaryo) {
 
 <Kalendaryo render={MyCalendar} />
 ```
+<br />
 
 #### #getWeeksInMonth
 <pre>
-<b>type:</b> func(date?: Date, startingDayIndex?: Integer): WeekArray: DayArray: { label: Integer, dateValue: Date }
+<b>type:</b> func(date?: Date, startingDayIndex?: Number): Week[DayObject[]]
+<b>throws:</b> Error exception when the types of the given argument are invalid
 </pre>
 
-Returns an array of each weeks for the month of the given date, each array of weeks contain an array of days for that week. You can invoke this in three ways:
+Returns an array of weeks, each containing their respective days for the month of the given date
 
-  * `getWeeksInMonth()` - Returns an array for the weeks in the month of the [`#date`](#date) state with the days starting at the value of [`#startWeekAt`](#startweekat) prop
+  * `getWeeksInMonth()` - Returns an array of weeks for the month of the [`#date`](#date) state, with the weeks starting at the value specified from the [`#startWeekAt`](#startweekat) prop
 
-  * `getWeeksInMonth(date)` - Returns an array for the weeks in the month of the given `date` argument, with the days starting at the value of [`#startWeekAt`](#startweekat) prop
+  * `getWeeksInMonth(date)` - Returns an array of weeks for the month of the given *date argument*, with the weeks starting at the value specified from the [`#startWeekAt`](#startweekat) prop
 
-  * `getWeeksInMonth(date, startingDayIndex)` - Returns an array for the weeks in the given `date` argument, with the days starting at the value of the `startingDayIndex` argument
+  * `getWeeksInMonth(date, startingDayIndex)` - Returns an array of weeks for the month of the given *date argument*, with the weeks starting at the value specified from the given *startingDayIndex argument*
 
-**NOTE:** Throws an error if an invalid argument value is passed to the function
-
-```js
+```jsx
 function MyCalendar(kalendaryo) {
   const prevMonth = kalendaryo.getDatePrevMonth()
   const weeksPrevMonth = kalendaryo.getWeeksInMonth(prevMonth, 1)
@@ -524,17 +520,17 @@ function MyCalendar(kalendaryo) {
 
 <Kalendaryo render={MyCalendar} />
 ```
+<br />
 
 #### #setDate
 <pre>
 <b>type:</b> func(date: Date): void
+<b>throws:</b> Error exception when the types of the given argument are invalid
 </pre>
 
-Updates the [`#date`](#date) state to the given date object
+Updates the [`#date`](#date) state to the given date
 
-**NOTE:** Throws an error if an invalid argument value is passed to the function
-
-```js
+```jsx
 function MyCalendar(kalendaryo) {
   const birthday = new Date(1988, 4, 27)
   const currentDate = kalendaryo.getFormattedDate()
@@ -550,17 +546,17 @@ function MyCalendar(kalendaryo) {
 
 <Kalendaryo render={MyCalendar} />
 ```
+<br />
 
 #### #setSelectedDate
 <pre>
-<b>type:</b> func(date: Date): void
+<b>type:</b> func(selectedDate: Date): void
+<b>throws:</b> Error exception when the types of the given argument are invalid
 </pre>
 
-Updates the [`#selectedDate`](#selecteddate) state to the given date object
+Updates the [`#selectedDate`](#selecteddate) state to the given selected date
 
-**NOTE:** Throws an error if an invalid argument value is passed to the function
-
-```js
+```jsx
 function MyCalendar(kalendaryo) {
   const birthday = new Date(1988, 4, 27)
   const currentDate = kalendaryo.getFormattedDate()
@@ -578,17 +574,17 @@ function MyCalendar(kalendaryo) {
 
 <Kalendaryo render={MyCalendar} />
 ```
+<br />
 
 #### #pickDate
 <pre>
 <b>type:</b> func(date: Date): void
+<b>throws:</b> Error exception when the types of the given argument are invalid
 </pre>
 
-Updates both the [`#date`](#date) & [`#selectedDate`](#selecteddate) state to the given date object
+Updates both the [`#date`](#date) & [`#selectedDate`](#selecteddate) state to the given date
 
-**NOTE:** Throws an error if an invalid argument value is passed to the function
-
-```js
+```jsx
 function MyCalendar(kalendaryo) {
   const birthday = new Date(1988, 4, 27)
   const currentDate = kalendaryo.getFormattedDate()
