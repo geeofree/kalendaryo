@@ -9,7 +9,7 @@
     "test:coverage": "jest --coverage --coverageReporters=text-lcov",
     "test:coverage:coveralls": "yarn test:coverage | coveralls",
     "linter:init": "eslint --init",
-    "build": "rm -rf ./lib && babel ./src -d ./lib",
+    "build": "rm -rf ./lib && babel ./src -d ./lib --ignore '**/*.test.js'",
     "commit": "git-cz",
     "travis-deploy-once": "travis-deploy-once",
     "semantic-release": "semantic-release"
