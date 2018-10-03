@@ -658,6 +658,7 @@ function MyCalendar(kalendaryo) {
 * [Basic Calendar](https://codesandbox.io/s/vjkq15zj0y)
 * [Date Range Calendar](https://codesandbox.io/s/7yk8x627j6)
 * [Date Picker Input (Downshift x Kalendaryo)](https://codesandbox.io/s/j47zv28xkw)
+* [Moon Phase Calendar](https://codesandbox.io/s/v8wmqjn943)
 
 ## Inspiration
 This project is heavily inspired from [Downshift](https://github.com/paypal/downshift) by [Kent C. Dodds](https://twitter.com/kentcdodds), a component library that uses render props to expose certain APIs for you to build flexible and accessible autocomplete, dropdown, combobox, etc. components.
