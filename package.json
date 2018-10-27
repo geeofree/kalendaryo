@@ -9,7 +9,7 @@
     "test:coverage": "jest --coverage --coverageReporters=text-lcov",
     "test:coverage:coveralls": "yarn test:coverage | coveralls",
     "linter:init": "eslint --init",
-    "build": "rm -rf ./lib && babel ./src -d ./lib",
+    "build": "rm -rf ./lib && babel ./src -d ./lib --ignore '**/*.test.js'",
     "commit": "git-cz",
     "travis-deploy-once": "travis-deploy-once",
     "semantic-release": "semantic-release"
@@ -39,8 +39,8 @@
     "react": ">=0.14.x"
   },
   "dependencies": {
-    "prop-types": ">=15",
-    "date-fns": "1.x"
+    "date-fns": "1.x",
+    "prop-types": ">=15"
   },
   "devDependencies": {
     "babel-cli": "6.26.0",
@@ -52,8 +52,6 @@
     "babel-preset-stage-1": "6.24.1",
     "commitizen": "2.9.6",
     "cz-conventional-changelog": "2.1.0",
-    "enzyme": "3.3.0",
-    "enzyme-adapter-react-16": "1.1.1",
     "eslint": "4.19.1",
     "eslint-config-standard": "11.0.0",
     "eslint-plugin-import": "2.11.0",
@@ -66,12 +64,16 @@
     "prettier": "1.12.1",
     "react": "16.3.2",
     "react-dom": "16.3.2",
+    "react-testing-library": "5.0.0",
     "semantic-release": "^15.4.1",
     "travis-deploy-once": "^5.0.0"
   },
   "jest": {
     "setupFiles": [
       "./tests/jest-setup.js"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/tests/kalendaryo.spec.js"
     ]
   },
   "config": {

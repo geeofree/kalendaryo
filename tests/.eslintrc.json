@@ -2,27 +2,6 @@
   "extends": ["../.eslintrc.json", "plugin:jest/recommended"],
   "plugins": ["jest"],
   "globals": {
-    "shallow": true,
-    "mount": true,
-    "render": true,
-    "React": true,
-    "birthday": true,
-    "dateToday": true,
-    "format": true,
-    "addMonths": true,
-    "subMonths": true,
-    "getDate": true,
-    "getDaysInMonth": true,
-    "getMonth": true,
-    "setDate": true,
-    "getComponentInstance": true,
-    "getComponent": true,
-    "subDays": true,
-    "addDays": true,
-    "startOfWeek": true,
-    "startOfMonth": true,
-    "isSameWeek": true,
-    "addWeeks": true,
-    "getDay": true
+    "React": true
   }
 }
