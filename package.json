@@ -63,7 +63,7 @@
     "jest": "22.4.3",
     "prettier": "1.12.1",
     "react": "16.3.2",
-    "react-dom": "16.3.2",
+    "react-dom": "16.3.3",
     "react-testing-library": "5.0.0",
     "semantic-release": "^15.4.1",
     "travis-deploy-once": "^5.0.0"
